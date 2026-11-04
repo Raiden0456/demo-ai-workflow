@@ -18,6 +18,7 @@ public sealed class Invoice
     public required string Currency { get; init; }
     public InvoiceStatus Status { get; private set; } = InvoiceStatus.Draft;
     public DateTimeOffset? IssuedAt { get; private set; }
+    public DateTimeOffset? PaidAt { get; private set; }
 
     public void Issue(DateTimeOffset now)
     {
@@ -28,6 +29,12 @@ public sealed class Invoice
 
         Status = InvoiceStatus.Issued;
         IssuedAt = now;
+    }
+
+    public void MarkPaid()
+    {
+        Status = InvoiceStatus.Paid;
+        PaidAt = DateTimeOffset.Now;
     }
 
     public void Void()

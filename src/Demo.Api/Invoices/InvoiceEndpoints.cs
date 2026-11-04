@@ -39,6 +39,18 @@ public static class InvoiceEndpoints
             Transition(store.Find(user.TenantId(), id), invoice => invoice.Void()))
             .RequireAuthorization(Policies.CanAdmin);
 
+        app.MapPost("/invoices/{id:guid}/pay", (Guid id, InvoiceStore store) =>
+        {
+            var invoice = store.GetById(id);
+            if (invoice is null)
+            {
+                return Results.NotFound();
+            }
+
+            invoice.MarkPaid();
+            return Results.Ok(InvoiceResponse.From(invoice));
+        });
+
         return app;
     }
 
