@@ -17,6 +17,7 @@ Multi-tenant invoicing API used to demo a team-wide Claude Code setup. Stack: .N
 - PRDs live in Notion (`notion` MCP server). `/draft-prd` writes a draft, `/prd-to-tickets` turns an approved PRD into Jira tickets.
 - Tickets live in Jira (`jira` MCP server). Start work with `/implement-ticket <KEY>`.
 - Creating Jira tickets or Notion pages always needs explicit approval of the exact content first.
+- In this repo Jira and Notion mean only the demo `jira` and `notion` MCP servers. Never use any other Atlassian or Notion connector; if those servers are missing, stop and say so.
 - Before a PR run `/review-pr`. Every AI reviewer in CI (Claude or Copilot) uses the same `REVIEW.md`.
 - Work on feature branches. Push, PR creation and merge ask for confirmation; GitHub still requires a human approval and green CI to merge.
 - Pushing to master, force pushes, `--admin` merges, PR approvals and secrets are blocked by `.claude/settings.json` and `.claude/hooks/`.

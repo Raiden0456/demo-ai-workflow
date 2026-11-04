@@ -15,7 +15,7 @@ Create Jira tickets from the PRD: $ARGUMENTS
    - Open questions are not tickets. List them under the table and mark tickets that depend on them.
 4. Stop and ask: "Create these N tickets in Jira and link them in the PRD? (yes / change something / no)". Apply changes and show the table again. Never create anything without a clear yes.
 5. Create each ticket with label `prd:<page id>` and a description with context, acceptance criteria and the PRD link.
-6. Append a "Jira tickets created" list with keys and summaries to the PRD.
+6. Append the list of created tickets (key and summary per line) to the end of the PRD, which is its "Jira tickets" section. Do not add another heading.
 7. Reply with the created keys, total points and the open questions that still block work.
 
 Works with the demo `jira` and `notion` MCP servers and with the Atlassian and Notion connectors in the Claude app.
