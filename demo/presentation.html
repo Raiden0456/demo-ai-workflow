@@ -533,19 +533,19 @@
         <div class="panel checks">
           <div class="panel-head"><span class="pr-title">feat(invoices): mark invoice as paid <span>#1</span></span><span class="tag warn">Changes requested</span></div>
           <div class="row"><span class="sym ok">✓</span>CI · build, format, tests<small>Passed</small></div>
-          <div class="row"><span class="sym bad">!</span>Claude Review · REVIEW.md<small>5 findings</small></div>
+          <div class="row"><span class="sym bad">!</span>Claude Review · REVIEW.md<small>2 critical, 2 major</small></div>
           <div class="comment">
-            <div class="path">src/Demo.Api/Invoices/InvoiceEndpoints.cs</div>
+            <div class="path">src/Demo.Api/Invoices/InvoiceStore.cs</div>
             <div class="code">
-<div><span class="ln">40</span>            .RequireAuthorization(Policies.CanAdmin);</div>
-<div><span class="ln">41</span></div>
-<div class="hit"><span class="ln">42</span>        app.MapPost("/invoices/{id:guid}/pay", (Guid id, InvoiceStore store) =&gt;</div>
-<div><span class="ln">43</span>        {</div>
-<div class="hit"><span class="ln">44</span>            var invoice = store.GetById(id);</div>
+<div><span class="ln">22</span>    }</div>
+<div><span class="ln">23</span></div>
+<div class="hit"><span class="ln">24</span>    public Invoice? GetById(Guid id)</div>
+<div><span class="ln">25</span>    {</div>
+<div><span class="ln">26</span>        lock (_lock)</div>
             </div>
             <div class="body">
               <div class="who"><span class="tag bad">Critical</span><strong>claude</strong> reviewed</div>
-              <div>The endpoint is mapped outside the authorised group and reads by id alone, so anyone can mark any tenant's invoice as paid.</div>
+              <div><code>GetById</code> reads an invoice by id alone, across tenants. This breaks the multi-tenancy rule. Use the existing tenant-scoped <code>store.Find(user.TenantId(), id)</code> and delete this method.</div>
             </div>
           </div>
         </div>
