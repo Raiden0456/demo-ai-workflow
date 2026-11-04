@@ -8,7 +8,7 @@ allowed-tools: Read, Grep, Glob, Bash(git diff:*), Bash(git log:*), Bash(gh pr v
 Review target: $ARGUMENTS (empty → current branch vs `main`; a number → that PR via `gh pr diff`).
 
 1. Get the diff and the list of changed files. Read each changed file in full, not just the hunks.
-2. Check every item of `docs/review-checklist.md`. Pay most attention to tenant isolation and authorization.
+2. Check every item of `REVIEW.md`. Pay most attention to tenant isolation and authorization.
 3. If the change references a ticket, fetch it with `mcp__jira__get_issue` and verify the acceptance criteria are met and tested.
 
 Output a table: severity (Critical / High / Medium / Low), file:line, problem, concrete fix.

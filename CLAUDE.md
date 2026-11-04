@@ -15,7 +15,7 @@ Multi-tenant invoicing API used to demo a team-wide Claude Code setup. Stack: .N
 
 ## Workflow
 - Tickets live in Jira (`jira` MCP server). Start work with `/implement-ticket <KEY>`.
-- Before a PR run `/review-pr`; CI runs the same checklist (`docs/review-checklist.md`).
+- Before a PR run `/review-pr`. Every AI reviewer in CI (Claude or Copilot) uses the same `REVIEW.md`.
 - Never commit, push, merge or approve PRs. Humans own those steps; settings and hooks enforce it.
 - Never read `.env*` or `*.local.json` files.
 

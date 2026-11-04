@@ -6,7 +6,7 @@ on:
 
 jobs:
   review:
-    if: github.event.pull_request.draft == false
+    if: vars.AI_REVIEWER == 'claude' && github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -26,7 +26,7 @@ jobs:
             BASE: ${{ github.event.pull_request.base.ref }}
 
             You are the first-pass reviewer. A human approval is still required to merge.
-            The PR branch is checked out. Read CLAUDE.md and docs/review-checklist.md, then review
+            The PR branch is checked out. Read CLAUDE.md and REVIEW.md, then review
             `git diff origin/${{ github.event.pull_request.base.ref }}...HEAD` against that checklist.
 
             Post each finding as an inline comment with `mcp__github_inline_comment__create_inline_comment`

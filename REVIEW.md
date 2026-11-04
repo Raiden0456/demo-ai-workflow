@@ -1,6 +1,6 @@
 # Review checklist
 
-Used by `/review-pr` locally and by the Claude Review GitHub Action.
+Single source of review rules for every reviewer: `/review-pr` locally, Claude Review Action, GitHub Copilot code review (reads this file natively).
 
 ## Security
 - [ ] New endpoints are inside a group with `RequireAuthorization()` and mutating ones have an explicit policy.
