@@ -3,40 +3,45 @@
   "permissions": {
     "allow": [
       "Bash(dotnet build:*)",
-      "Bash(dotnet test:*)",
       "Bash(dotnet format:*)",
       "Bash(dotnet restore:*)",
       "Bash(dotnet run --project tools/Demo.JiraMock:*)",
-      "Bash(git status:*)",
+      "Bash(dotnet test:*)",
+      "Bash(gh pr checks:*)",
+      "Bash(gh pr diff:*)",
+      "Bash(gh pr list:*)",
+      "Bash(gh pr view:*)",
+      "Bash(git add:*)",
+      "Bash(git branch:*)",
       "Bash(git diff:*)",
       "Bash(git log:*)",
       "Bash(git show:*)",
-      "Bash(git add:*)",
-      "Bash(git fetch:*)",
-      "Bash(git branch:*)",
-      "Bash(gh pr view:*)",
-      "Bash(gh pr diff:*)",
-      "Bash(gh pr list:*)",
-      "Bash(gh pr checks:*)",
+      "Bash(git status:*)",
       "mcp__jira__get_active_sprint",
+      "mcp__jira__get_issue",
       "mcp__jira__search_issues",
-      "mcp__jira__get_issue"
+      "mcp__notion__get_page",
+      "mcp__notion__search_pages"
     ],
     "ask": [
-      "Bash(git commit:*)",
-      "Bash(git checkout:*)",
-      "Bash(git switch:*)",
-      "Bash(git merge:*)",
-      "Bash(git rebase:*)",
-      "Bash(git push:*)",
-      "Bash(gh pr create:*)",
-      "Bash(gh pr comment:*)",
-      "Bash(gh pr merge:*)",
-      "Bash(gh api:*)",
       "Bash(curl:*)",
-      "Bash(wget:*)",
       "Bash(dotnet add:*)",
-      "WebFetch"
+      "Bash(gh api:*)",
+      "Bash(gh pr comment:*)",
+      "Bash(gh pr create:*)",
+      "Bash(gh pr merge:*)",
+      "Bash(git checkout:*)",
+      "Bash(git commit:*)",
+      "Bash(git fetch:*)",
+      "Bash(git merge:*)",
+      "Bash(git push:*)",
+      "Bash(git rebase:*)",
+      "Bash(git switch:*)",
+      "Bash(wget:*)",
+      "WebFetch",
+      "mcp__jira__create_issue",
+      "mcp__notion__append_to_page",
+      "mcp__notion__create_page"
     ],
     "deny": [
       "Read(./.env)",
@@ -49,7 +54,10 @@
     ],
     "disableBypassPermissionsMode": "disable"
   },
-  "enabledMcpjsonServers": ["jira"],
+  "enabledMcpjsonServers": [
+    "jira",
+    "notion"
+  ],
   "hooks": {
     "PreToolUse": [
       {

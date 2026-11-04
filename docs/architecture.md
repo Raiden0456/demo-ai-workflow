@@ -3,7 +3,8 @@
 ## Solution
 - `src/Demo.Api` — ASP.NET Core minimal API (.NET 10), feature folders: `Auth/`, `Invoices/`.
 - `tests/Demo.Api.Tests` — xUnit, endpoint tests via `WebApplicationFactory<Program>` plus domain unit tests.
-- `tools/Demo.JiraMock` — stdio MCP server with mock sprint data, registered as `jira` in `.mcp.json`.
+- `tools/Demo.JiraMock` — stdio MCP server with mock sprint data and in-memory ticket creation, registered as `jira` in `.mcp.json`.
+- `tools/Demo.NotionMock` — stdio MCP server with mock PRDs and notes, registered as `notion` in `.mcp.json`. Created pages live in memory until the server restarts.
 
 ## Multi-tenancy
 Every invoice belongs to a tenant. The tenant comes only from the authenticated user (`ClaimsPrincipal.TenantId()`), never from the route, body or query.

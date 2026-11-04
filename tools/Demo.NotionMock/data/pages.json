@@ -1,0 +1,26 @@
+[
+  {
+    "id": "prd-template",
+    "title": "PRD template",
+    "status": "Template",
+    "lastEditedBy": "Product",
+    "lastEdited": "2026-09-14",
+    "content": "# PRD: <feature>\n\n## Problem\nWho is affected, what hurts today, evidence (tickets, calls, numbers).\n\n## Goal\nOne sentence. How we know it worked.\n\n## Non-goals\nWhat we deliberately do not do now.\n\n## Users and permissions\nWhich roles can use it. Tenant rules.\n\n## Requirements\nNumbered, testable statements. R1, R2, ...\n\n## Acceptance criteria\nGiven / when / then per requirement.\n\n## Open questions\nUnknowns with an owner. Never guess, list them here.\n\n## Jira tickets\nFilled in when tickets are created.\n"
+  },
+  {
+    "id": "prd-csv-export",
+    "title": "PRD: Invoice CSV export",
+    "status": "Ready for tickets",
+    "lastEditedBy": "Aoife Byrne",
+    "lastEdited": "2026-11-03",
+    "content": "# PRD: Invoice CSV export\n\nSource: DEMO-110, request from Northwind.\n\n## Problem\nFinance teams at our customers rebuild invoice lists by hand in Excel every month end. Northwind asked twice in October. Three other tenants asked support for the same thing.\n\n## Goal\nA billing user downloads the invoices they see as a CSV that opens correctly in Excel. Success: month-end support requests about exports drop to zero.\n\n## Non-goals\n- XLSX or PDF export.\n- Scheduled or emailed exports.\n- Exporting other tenants' data, even for admins.\n\n## Users and permissions\n- Billing and admin roles can export. Viewers cannot.\n- Only invoices of the caller's tenant are ever included.\n\n## Requirements\n- R1. `GET /invoices/export` returns `text/csv` with columns: Number, Customer, Amount, Currency, Status, IssuedAt, PaidAt.\n- R2. Optional filters: status and issued date range (from, to). Same rules as the invoice list.\n- R3. Amounts use a dot as decimal separator, dates are ISO 8601 UTC. File is UTF-8 with BOM so Excel shows accents correctly.\n- R4. Up to 10,000 rows per export, streamed, p95 under 2 seconds.\n- R5. Each export is written to the audit log with user, tenant, filters and row count.\n\n## Acceptance criteria\n- Given a billing user of acme, when they export, then only acme invoices are in the file.\n- Given a viewer, when they export, then the API returns 403.\n- Given a status filter Paid, when exporting, then only Paid invoices are included.\n- Given more than 10,000 matching invoices, when exporting, then the API returns 400 with a message to narrow the filters.\n- Given any export, then one audit entry is written.\n- Given a customer name with accents, when the file is opened in Excel, then it is displayed correctly.\n\n## Open questions\n- Should Void invoices be included by default? Owner: Aoife.\n- Do we need a button in the Android app in this release? Owner: Ciara.\n\n## Jira tickets\nNot created yet.\n"
+  },
+  {
+    "id": "northwind-call-notes",
+    "title": "Call notes: Northwind, 3 Nov",
+    "status": "Notes",
+    "lastEditedBy": "Aoife Byrne",
+    "lastEdited": "2026-11-03",
+    "content": "# Call notes: Northwind, 3 Nov\n\nAttendees: Aoife (PM), Sean, Northwind finance lead.\n\n- They chase unpaid invoices manually by email, 40+ per month.\n- Want automatic reminders: 3 days before due date, on due date, 7 days overdue.\n- Some customers must never get reminders (key accounts). Need an opt-out per customer.\n- Reminder emails must come from their domain, not ours. Sean thinks this needs DNS setup per tenant.\n- They want to see who was reminded and when, ideally on the invoice page.\n- Not now: SMS, escalation to collections.\n- Due dates do not exist in our invoices yet. Sean: we need to add them first.\n"
+  }
+]

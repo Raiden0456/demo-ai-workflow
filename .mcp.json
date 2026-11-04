@@ -3,6 +3,10 @@
     "jira": {
       "command": "dotnet",
       "args": ["run", "--project", "tools/Demo.JiraMock"]
+    },
+    "notion": {
+      "command": "dotnet",
+      "args": ["run", "--project", "tools/Demo.NotionMock"]
     }
   }
 }

@@ -7,5 +7,6 @@
   </Folder>
   <Folder Name="/tools/">
     <Project Path="tools/Demo.JiraMock/Demo.JiraMock.csproj" />
+    <Project Path="tools/Demo.NotionMock/Demo.NotionMock.csproj" />
   </Folder>
 </Solution>

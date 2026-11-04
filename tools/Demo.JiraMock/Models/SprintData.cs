@@ -16,6 +16,8 @@ public sealed record Issue(
     IReadOnlyList<Comment> Comments,
     bool Flagged = false,
     string? BlockedBy = null,
-    bool AddedAfterSprintStart = false);
+    bool AddedAfterSprintStart = false,
+    IReadOnlyList<string>? Labels = null,
+    bool InActiveSprint = true);
 
 public sealed record Comment(string Author, DateOnly Created, string Body);

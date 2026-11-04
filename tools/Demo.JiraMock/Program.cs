@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Demo.JiraMock.Models;
+using Demo.JiraMock.Services;
 using Demo.JiraMock.Tools;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -12,6 +13,8 @@ var data = JsonSerializer.Deserialize<SprintData>(File.ReadAllText(dataPath), Js
 var builder = Host.CreateApplicationBuilder(args);
 builder.Logging.AddConsole(o => o.LogToStandardErrorThreshold = LogLevel.Trace);
 builder.Services.AddSingleton(data);
+builder.Services.AddSingleton(TimeProvider.System);
+builder.Services.AddSingleton<IssueStore>();
 builder.Services
     .AddMcpServer()
     .WithStdioServerTransport()
