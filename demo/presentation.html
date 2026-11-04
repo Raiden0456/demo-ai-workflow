@@ -1,0 +1,507 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code for the team</title>
+<style>
+  :root {
+    --paper: #eef2f4;
+    --paper-2: #e3e9ed;
+    --card: #f8fafb;
+    --ink: #17202b;
+    --ink-2: #4a5563;
+    --muted: #7a8594;
+    --hair: #cfd8de;
+    --eng: #0b6e99;
+    --prod: #d99a00;
+    --gate: #c8323a;
+    --auto: #6250d6;
+    --zone: #dde5ea;
+    --font: "Avenir Next", "Avenir", "Segoe UI", system-ui, sans-serif;
+    --mono: "SF Mono", Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: #c9d3d9; overflow: hidden; }
+  body { font-family: var(--font); color: var(--ink); -webkit-font-smoothing: antialiased; }
+
+  .viewport { position: fixed; inset: 0; display: grid; place-items: center; }
+  .stage { width: 1600px; height: 900px; position: relative; background: var(--paper); transform-origin: center; flex: none; }
+
+  .slide { position: absolute; inset: 0; padding: 72px 88px 64px; display: none; }
+  .slide.is-active { display: block; animation: show .18s ease-out; }
+  @keyframes show { from { opacity: 0; } to { opacity: 1; } }
+
+  h1, h2, h3, p { margin: 0; }
+  h1 { font-size: 76px; line-height: 1.04; font-weight: 600; letter-spacing: -0.02em; max-width: 15ch; }
+  h2 { font-size: 46px; line-height: 1.1; font-weight: 600; letter-spacing: -0.015em; }
+  .lead { font-size: 25px; line-height: 1.45; color: var(--ink-2); max-width: 34ch; }
+
+  .footer { position: absolute; left: 88px; bottom: 28px; display: flex; gap: 24px; font-size: 15px; color: var(--muted); }
+
+  .title { display: grid; grid-template-columns: 1fr 520px; gap: 64px; align-items: center; height: 100%; }
+  .title .lead { margin-top: 28px; }
+  .title .who { margin-top: 56px; font-size: 18px; color: var(--ink-2); line-height: 1.6; }
+  .title .who strong { color: var(--ink); font-weight: 600; }
+  .lines-art { width: 100%; height: auto; }
+
+  .map-slide { display: grid; grid-template-rows: auto 1fr; gap: 20px; }
+  .map-slide .head { display: flex; align-items: baseline; justify-content: space-between; gap: 32px; }
+  .map-slide .head p { font-size: 19px; color: var(--ink-2); max-width: 52ch; text-align: right; }
+  .map { width: 100%; height: auto; display: block; }
+  .map-slide .map { width: auto; height: 640px; max-width: 100%; margin: 0 auto; }
+
+  .legend { display: flex; gap: 32px; font-size: 16px; color: var(--ink-2); margin-top: 4px; }
+  .legend span { display: inline-flex; align-items: center; gap: 10px; white-space: nowrap; }
+  .legend i { width: 34px; height: 8px; border-radius: 4px; display: inline-block; }
+  .legend .auto-key { background: repeating-linear-gradient(90deg, var(--auto) 0 10px, transparent 10px 16px); }
+  .legend .gate-key { width: 18px; height: 18px; border-radius: 50%; border: 4px solid var(--gate); background: #fff; }
+
+  .station-slide { display: grid; grid-template-columns: 720px 1fr; gap: 72px; align-items: center; height: 100%; }
+  .station-slide .mini { background: var(--card); border: 1px solid var(--hair); border-radius: 20px; padding: 24px 20px; }
+  .station-slide .body { display: grid; gap: 26px; align-content: center; }
+  .stop { display: flex; align-items: center; gap: 16px; font-size: 18px; color: var(--ink-2); }
+  .stop b { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-size: 19px; font-weight: 600; background: var(--ink); }
+  .stop.gate b { background: var(--gate); }
+  .stop.auto b { background: var(--auto); }
+  .pace { display: inline-flex; gap: 4px; padding: 4px; border-radius: 12px; background: var(--paper-2); margin-top: 20px; }
+  .pace button { font: 600 16px var(--font); color: var(--ink-2); background: transparent; border: 0; border-radius: 9px; padding: 10px 18px; cursor: pointer; }
+  .pace button[aria-pressed="true"] { background: #fff; color: var(--ink); box-shadow: 0 1px 2px rgba(23,32,43,.12); }
+  .pace button:focus-visible { outline: 3px solid var(--eng); outline-offset: 2px; }
+  .points { list-style: none; padding: 0; margin: 0; display: grid; gap: 16px; font-size: 21px; line-height: 1.45; }
+  .points li { padding-left: 26px; position: relative; max-width: 40ch; }
+  .points li::before { content: ""; position: absolute; left: 0; top: 0.62em; width: 10px; height: 10px; border-radius: 50%; border: 3px solid var(--ink); background: #fff; }
+  .demo { border-left: 4px solid var(--ink); padding: 4px 0 4px 20px; display: grid; gap: 10px; }
+  .demo h3 { font-size: 16px; font-weight: 600; color: var(--ink-2); }
+  .demo div { display: flex; flex-wrap: wrap; gap: 10px; }
+  code { font-family: var(--mono); font-size: 16px; background: var(--paper-2); color: var(--ink); padding: 5px 10px; border-radius: 6px; }
+
+  .rollout { display: grid; grid-template-rows: auto 1fr auto; gap: 40px; height: 100%; }
+  .timeline { position: relative; display: grid; grid-template-columns: repeat(6, 1fr); gap: 0; align-self: center; }
+  .timeline::before { content: ""; position: absolute; left: 0; right: 0; top: 19px; height: 10px; border-radius: 5px; background: var(--eng); }
+  .phase { position: relative; padding-right: 28px; }
+  .phase .dot { width: 48px; height: 48px; border-radius: 50%; background: #fff; border: 5px solid var(--ink); display: grid; place-items: center; font-weight: 600; font-size: 15px; position: relative; }
+  .phase .weeks { margin-top: 22px; font-size: 16px; color: var(--muted); }
+  .phase h3 { margin-top: 6px; font-size: 23px; line-height: 1.25; font-weight: 600; }
+  .phase p { margin-top: 10px; font-size: 17px; line-height: 1.5; color: var(--ink-2); }
+  .note { font-size: 19px; color: var(--ink-2); max-width: 70ch; line-height: 1.5; }
+
+  .close { display: grid; grid-template-columns: 1fr 1fr; gap: 88px; align-items: center; height: 100%; }
+  .close .points { font-size: 23px; }
+
+  .nav { position: fixed; right: 20px; bottom: 16px; display: flex; gap: 8px; z-index: 5; }
+  .nav button { font: 600 14px var(--font); color: var(--ink); background: rgba(255,255,255,.75); border: 1px solid var(--hair); border-radius: 8px; padding: 6px 12px; cursor: pointer; }
+  .nav button:focus-visible, .st:focus-visible { outline: 3px solid var(--eng); outline-offset: 3px; }
+
+  .line { fill: none; stroke-width: 14; stroke-linecap: round; stroke-linejoin: round; }
+  .line.eng { stroke: var(--eng); }
+  .line.prod { stroke: var(--prod); }
+  .line.auto { stroke: var(--auto); stroke-width: 10; stroke-dasharray: 16 14; stroke-linecap: butt; }
+  .zone rect { fill: var(--zone); }
+  .zone text { font: 600 15px var(--font); fill: var(--muted); }
+  .st { cursor: pointer; }
+  .st .name { font: 600 20px var(--font); fill: var(--ink); }
+  .st .desc { font: 400 15px var(--font); fill: var(--ink-2); }
+  .st .badge circle { fill: var(--ink); }
+  .st.gate .badge circle { fill: var(--gate); }
+  .st .badge text { font: 600 14px var(--font); fill: #fff; }
+  .term .name { font: 600 20px var(--font); fill: var(--ink); }
+  .term .desc { font: 400 15px var(--font); fill: var(--ink-2); }
+  .mini .st { cursor: default; }
+  .mini .st:not(.on), .mini .term { opacity: .3; }
+  .mini .st .name.big { font-size: 32px; }
+  .mini .st .desc.big { font-size: 22px; }
+  .mini .zone text { opacity: .6; }
+  .mini .halo { fill: none; stroke: var(--ink); stroke-width: 3; }
+  .mini .st.gate.on .halo { stroke: var(--gate); }
+  .draw .line:not(.auto) { stroke-dasharray: 2000; stroke-dashoffset: 2000; animation: draw 1.6s ease-out forwards; }
+  .draw .line.prod { animation-delay: .35s; }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .slide.is-active { animation: none; }
+    .draw .line:not(.auto) { animation: none; stroke-dashoffset: 0; }
+  }
+  @media print {
+    html, body { overflow: visible; background: none; }
+    .viewport { position: static; display: block; }
+    .stage { transform: none !important; }
+    .slide { display: block !important; position: relative; width: 1600px; height: 900px; page-break-after: always; }
+    .nav { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="viewport">
+  <div class="stage" id="stage">
+
+    <section class="slide" data-title="Intro">
+      <div class="title">
+        <div>
+          <h1>One way of working with AI, for the whole team</h1>
+          <p class="lead">A Claude Code setup your five engineers share, guardrails that hold, and the same skills for people who never open a terminal.</p>
+          <p class="who"><strong>Raiden Babakekhian</strong><br>Senior software engineer, AI-assisted delivery</p>
+        </div>
+        <svg class="lines-art" viewBox="0 0 520 520" aria-hidden="true">
+          <path class="line eng" d="M20 170 H250 L340 260 H500" />
+          <path class="line prod" d="M20 360 H140 L240 260 H340" />
+          <circle cx="250" cy="170" r="15" fill="#fff" stroke="#17202b" stroke-width="5" />
+          <circle cx="140" cy="360" r="15" fill="#fff" stroke="#17202b" stroke-width="5" />
+          <circle cx="340" cy="260" r="19" fill="#fff" stroke="#17202b" stroke-width="5" />
+          <circle cx="500" cy="260" r="15" fill="#fff" stroke="#c8323a" stroke-width="7" />
+        </svg>
+      </div>
+      <div class="footer"><span>Claude Code rollout proposal</span><span class="count"></span></div>
+    </section>
+
+    <section class="slide" data-title="System map">
+      <div class="map-slide">
+        <div class="head">
+          <div>
+            <h2>How work moves through the system</h2>
+            <div class="legend">
+              <span><i style="background:var(--eng)"></i>Engineers in Claude Code</span>
+              <span><i style="background:var(--prod)"></i>PMs and non-developers in the Claude app</span>
+              <span><i class="auto-key"></i>Automations in n8n, optional</span>
+              <span><i class="gate-key"></i>A person decides</span>
+            </div>
+          </div>
+          <p>Click a stop to jump to it.</p>
+        </div>
+        <div data-map="full" class="draw"></div>
+      </div>
+      <div class="footer"><span>System map</span><span class="count"></span></div>
+    </section>
+
+    <section class="slide" data-title="Shared rules" data-stop="1">
+      <div class="station-slide">
+        <div class="mini" data-map="1"></div>
+        <div class="body">
+          <div class="stop"><b>1</b>Shared rules</div>
+          <h2>One rulebook, stored in the repo</h2>
+          <ul class="points">
+            <li><code>CLAUDE.md</code> for Claude Code, <code>AGENTS.md</code> for Codex and Copilot, <code>REVIEW.md</code> for every reviewer.</li>
+            <li>Architecture, coding and testing rules live once in <code>docs/</code> and every tool reads them.</li>
+            <li>Arrives with <code>git pull</code>. Personal tweaks stay local and out of git.</li>
+          </ul>
+          <div class="demo"><h3>Live in the demo</h3><div><code>CLAUDE.md</code><code>AGENTS.md</code><code>REVIEW.md</code></div></div>
+        </div>
+      </div>
+      <div class="footer"><span>Stop 1</span><span class="count"></span></div>
+    </section>
+
+    <section class="slide" data-title="Guardrails" data-stop="2">
+      <div class="station-slide">
+        <div class="mini" data-map="2"></div>
+        <div class="body">
+          <div class="stop"><b>2</b>Guardrails</div>
+          <h2>Limits the agent can't talk its way around</h2>
+          <ul class="points">
+            <li>Permissions: safe commands run freely, commits ask first, secrets, push and merge are denied.</li>
+            <li>Hooks close the gaps, so <code>cat .env</code> is blocked even when <code>Read</code> is denied.</li>
+            <li>Every edited C# file is formatted automatically, so reviews skip style debates.</li>
+          </ul>
+          <div class="demo"><h3>Live in the demo</h3><div><code>read .env</code><code>run cat .env</code><code>push to master</code></div></div>
+        </div>
+      </div>
+      <div class="footer"><span>Stop 2</span><span class="count"></span></div>
+    </section>
+
+    <section class="slide" data-title="Jira via MCP" data-stop="3">
+      <div class="station-slide">
+        <div class="mini" data-map="3"></div>
+        <div class="body">
+          <div class="stop"><b>3</b>Jira via MCP</div>
+          <h2>Jira inside the conversation</h2>
+          <ul class="points">
+            <li>Claude reads sprints, tickets and comments through MCP. Read-only by default.</li>
+            <li>Each person signs in with their own Atlassian account, so Jira permissions still apply.</li>
+            <li>The demo runs on mock data. Your Atlassian is one entry in <code>.mcp.json</code>.</li>
+          </ul>
+          <div class="demo"><h3>Live in the demo</h3><div><code>/mcp</code><code>/sprint-report</code></div></div>
+        </div>
+      </div>
+      <div class="footer"><span>Stop 3</span><span class="count"></span></div>
+    </section>
+
+    <section class="slide" data-title="Skills in the Claude app" data-stop="4">
+      <div class="station-slide">
+        <div class="mini" data-map="4"></div>
+        <div class="body">
+          <div class="stop"><b>4</b>Skills in the Claude app</div>
+          <h2>The same skills, without a terminal</h2>
+          <ul class="points">
+            <li>PMs and leads work in the Claude app or browser, as they already do.</li>
+            <li>Admins publish skills to the whole organisation. Nobody installs anything.</li>
+            <li>The sprint report comes back as an interactive page, not a wall of text.</li>
+          </ul>
+          <div class="demo"><h3>Live in the demo</h3><div><code>“Give me the sprint report”</code></div></div>
+        </div>
+      </div>
+      <div class="footer"><span>Stop 4</span><span class="count"></span></div>
+    </section>
+
+    <section class="slide" data-title="Ticket to code" data-stop="5">
+      <div class="station-slide">
+        <div class="mini" data-map="5"></div>
+        <div class="body">
+          <div class="stop"><b>5</b>Ticket to code</div>
+          <h2>From ticket to tested change, with a plan you approve</h2>
+          <ul class="points">
+            <li>Claude pulls the ticket and turns acceptance criteria into a checklist.</li>
+            <li>It stops at a plan. Code and tests come only after a developer approves it.</li>
+            <li>One test per criterion, build and tests green, nothing committed for you.</li>
+          </ul>
+          <div class="demo"><h3>Live in the demo</h3><div><code>/implement-ticket DEMO-112</code></div></div>
+        </div>
+      </div>
+      <div class="footer"><span>Stop 5</span><span class="count"></span></div>
+    </section>
+
+    <section class="slide" data-title="Review gate" data-stop="6">
+      <div class="station-slide">
+        <div class="mini" data-map="6"></div>
+        <div class="body">
+          <div class="stop"><b>6</b>Review gate</div>
+          <h2>Two checks before a person looks</h2>
+          <ul class="points">
+            <li>CI builds with warnings as errors, checks formatting and runs every test.</li>
+            <li>An AI reviewer comments on each pull request. Claude, Copilot or none, one switch.</li>
+            <li>Every reviewer uses the same <code>REVIEW.md</code>, and developers run it locally first.</li>
+          </ul>
+          <div class="demo"><h3>Live in the demo</h3><div><code>PR: mark invoice as paid</code><code>/review-pr</code></div></div>
+        </div>
+      </div>
+      <div class="footer"><span>Stop 6</span><span class="count"></span></div>
+    </section>
+
+    <section class="slide" data-title="Human approval" data-stop="7">
+      <div class="station-slide">
+        <div class="mini" data-map="7"></div>
+        <div class="body">
+          <div class="stop gate"><b>7</b>Human approval</div>
+          <h2>A person merges. Always.</h2>
+          <ul class="points">
+            <li>Branch protection needs one approval and a green build before anything reaches master.</li>
+            <li>The AI never approves, merges or pushes. Settings deny it and GitHub enforces it.</li>
+            <li>Reviewers spend their time on design and risk, not on missing null checks.</li>
+          </ul>
+          <div class="demo"><h3>Live in the demo</h3><div><code>Merge blocked: review required</code></div></div>
+        </div>
+      </div>
+      <div class="footer"><span>Stop 7</span><span class="count"></span></div>
+    </section>
+
+    <section class="slide" data-title="Automations" data-stop="8">
+      <div class="station-slide">
+        <div class="mini" data-map="8"></div>
+        <div class="body">
+          <div class="stop auto"><b>8</b>Automations, optional</div>
+          <h2>Routine that should happen on its own</h2>
+          <ul class="points">
+            <li>Claude covers work that needs thinking. n8n covers events: something changes, something else happens, with retries and approvals.</li>
+            <li>Tickets move across the board automatically and the team gets an update in Slack.</li>
+            <li>A PM finishes requirements in Notion, AI drafts the tickets, the PM approves in Slack, and only then they appear in Jira.</li>
+          </ul>
+          <p class="note">Not on day one. We add it once we see which routine is still manual.</p>
+          <div class="demo"><h3>Live in the demo</h3><div><code>Board progress → Slack</code><code>Notion → Jira with approval</code></div></div>
+        </div>
+      </div>
+      <div class="footer"><span>Stop 8</span><span class="count"></span></div>
+    </section>
+
+    <section class="slide" data-title="Rollout">
+      <div class="rollout">
+        <div>
+          <h2>Six steps, at the pace you choose</h2>
+          <div class="pace" role="group" aria-label="Pace">
+            <button type="button" data-pace="std" aria-pressed="true">8 hours a week, 12 weeks</button>
+            <button type="button" data-pace="fast" aria-pressed="false">16 hours a week, 6 to 8 weeks</button>
+          </div>
+        </div>
+        <div class="timeline">
+          <div class="phase"><div class="dot">1</div><div class="weeks" data-std="Weeks 1–2" data-fast="Week 1">Weeks 1–2</div><h3>Audit and foundations</h3><p>Shared CLAUDE.md, guardrails and one skill in daily use.</p></div>
+          <div class="phase"><div class="dot">2</div><div class="weeks" data-std="Weeks 3–4" data-fast="Week 2">Weeks 3–4</div><h3>Jira in the loop</h3><p>Atlassian MCP for developers, sprint report for PMs.</p></div>
+          <div class="phase"><div class="dot">3</div><div class="weeks" data-std="Weeks 5–6" data-fast="Week 3">Weeks 5–6</div><h3>Review gate</h3><p>AI reviewer pilot, branch protection, review rules.</p></div>
+          <div class="phase"><div class="dot">4</div><div class="weeks" data-std="Weeks 7–8" data-fast="Week 4">Weeks 7–8</div><h3>Tests in CI</h3><p>Test generation standards and CI gates for the rebuild.</p></div>
+          <div class="phase"><div class="dot">5</div><div class="weeks" data-std="Weeks 9–10" data-fast="Week 5">Weeks 9–10</div><h3>Personal skills</h3><p>One skill per team member for their own routine work.</p></div>
+          <div class="phase"><div class="dot">6</div><div class="weeks" data-std="Weeks 11–12" data-fast="Weeks 6–8">Weeks 11–12</div><h3>Handover</h3><p>Docs, training on real tickets, before and after review.</p></div>
+        </div>
+        <p class="note" data-std="Eight hours a week in Irish working hours. Each step ends with something the team uses on real work." data-fast="Sixteen hours a week in Irish working hours. Same six steps, one to two months in total.">Eight hours a week in Irish working hours. Each step ends with something the team uses on real work.</p>
+      </div>
+      <div class="footer"><span>Rollout</span><span class="count"></span></div>
+    </section>
+
+    <section class="slide" data-title="Next step">
+      <div class="close">
+        <div>
+          <h2>Next step: start with your main repository</h2>
+          <p class="lead" style="margin-top:24px">Within the first two weeks you see the setup working on your own code.</p>
+        </div>
+        <ul class="points">
+          <li>Audit of how each of the five uses Claude today.</li>
+          <li>Shared CLAUDE.md and guardrails in your main repository.</li>
+          <li>One skill your team uses every day, chosen together.</li>
+          <li>A short demo to the team, then we plan the rest together.</li>
+        </ul>
+      </div>
+      <div class="footer"><span>Next step</span><span class="count"></span></div>
+    </section>
+
+  </div>
+</div>
+<nav class="nav" aria-label="Slides">
+  <button type="button" data-go="-1" aria-label="Previous slide">Prev</button>
+  <button type="button" data-go="1" aria-label="Next slide">Next</button>
+</nav>
+
+<script>
+(() => {
+  const NS = "http://www.w3.org/2000/svg";
+  const ENG_Y = 230, PROD_Y = 262, LOW_Y = 430, AUTO_Y = 560;
+
+  const LINES = [
+    { cls: "eng", d: `M60 ${ENG_Y} H1380` },
+    { cls: "prod", d: `M60 ${LOW_Y} H172 L340 ${PROD_Y} H700 L868 ${LOW_Y} H1130` },
+    { cls: "auto", d: `M520 ${AUTO_Y} H800 M700 ${AUTO_Y} V${PROD_Y + 22}` },
+  ];
+
+  const ZONES = [
+    { label: "Atlassian", x: 610, y: 30, w: 180, h: 268 },
+    { label: "GitHub", x: 980, y: 30, w: 440, h: 268 },
+  ];
+
+  const STOPS = [
+    { n: 1, name: "Shared rules", desc: ["CLAUDE.md, AGENTS.md,", "REVIEW.md in git"], x: 340, y: ENG_Y, interchange: true, slide: "Shared rules" },
+    { n: 2, name: "Guardrails", desc: ["Permissions and hooks", "the agent can't skip"], x: 520, y: ENG_Y, slide: "Guardrails" },
+    { n: 3, name: "Jira via MCP", desc: ["Read-only, each person", "with own access"], x: 700, y: ENG_Y, interchange: true, slide: "Jira via MCP" },
+    { n: 4, name: "Skills in the app", desc: ["Published to everyone,", "no terminal needed"], x: 960, y: LOW_Y, below: true, slide: "Skills in the Claude app" },
+    { n: 5, name: "Ticket to code", desc: ["Plan first, then code", "and tests"], x: 890, y: ENG_Y, slide: "Ticket to code" },
+    { n: 6, name: "Review gate", desc: ["CI plus Claude", "or Copilot"], x: 1070, y: ENG_Y, slide: "Review gate" },
+    { n: 7, name: "Human approval", desc: ["Nothing merges", "without a person"], x: 1250, y: ENG_Y, gate: true, slide: "Human approval" },
+    { n: 8, name: "Automations", desc: ["n8n for events", "and approvals"], x: 700, y: AUTO_Y, below: true, slide: "Automations" },
+  ];
+
+  const TERMINI = [
+    { x: 60, y: ENG_Y, name: "Engineers", desc: ["Claude Code,", "terminal and IDE"], anchor: "start", ty: 150 },
+    { x: 60, y: LOW_Y, name: "PMs and leads", desc: ["Claude app and browser"], anchor: "start", ty: 488 },
+    { x: 1380, y: ENG_Y, name: "master", desc: [], anchor: "end", ty: 284 },
+    { x: 1130, y: LOW_Y, name: "Sprint report", desc: ["interactive page"], anchor: "start", tx: 1160, ty: 425 },
+    { x: 520, y: AUTO_Y, name: "Notion", desc: [], anchor: "end", tx: 498, ty: 567 },
+    { x: 800, y: AUTO_Y, name: "Slack", desc: [], anchor: "start", tx: 822, ty: 567 },
+  ];
+
+  const make = (tag, attrs = {}, parent) => {
+    const node = document.createElementNS(NS, tag);
+    for (const [k, v] of Object.entries(attrs)) node.setAttribute(k, v);
+    if (parent) parent.append(node);
+    return node;
+  };
+  const text = (parent, x, y, cls, value, anchor = "middle") => {
+    const t = make("text", { x, y, class: cls, "text-anchor": anchor }, parent);
+    t.textContent = value;
+    return t;
+  };
+
+  function buildMap(active, onSelect) {
+    const svg = make("svg", { viewBox: "0 0 1440 720", class: "map", role: "img", "aria-label": "System map with eight stops" });
+    for (const z of ZONES) {
+      const g = make("g", { class: "zone" }, svg);
+      make("rect", { x: z.x, y: z.y, width: z.w, height: z.h, rx: 18 }, g);
+      text(g, z.x + 16, z.y + 26, "", z.label, "start");
+    }
+    for (const l of LINES) make("path", { d: l.d, class: `line ${l.cls}` }, svg);
+
+    for (const t of TERMINI) {
+      const g = make("g", { class: "term" }, svg);
+      make("rect", { x: t.x - 6, y: t.y - 22, width: 12, height: 44, rx: 6, fill: "#17202b" }, g);
+      if (active) continue;
+      const tx = t.tx ?? t.x;
+      text(g, tx, t.ty, "name", t.name, t.anchor);
+      t.desc.forEach((line, i) => text(g, tx, t.ty + 22 + i * 20, "desc", line, t.anchor));
+    }
+
+    for (const s of STOPS) {
+      const on = active === s.n;
+      const g = make("g", { class: `st${s.gate ? " gate" : ""}${on ? " on" : ""}` }, svg);
+      if (s.interchange) {
+        make("rect", { x: s.x - 20, y: ENG_Y - 20, width: 40, height: PROD_Y - ENG_Y + 40, rx: 20, fill: "#fff", stroke: "#17202b", "stroke-width": 5 }, g);
+      } else {
+        make("circle", { cx: s.x, cy: s.y, r: 17, fill: "#fff", stroke: s.gate ? "#c8323a" : "#17202b", "stroke-width": s.gate ? 8 : 5 }, g);
+      }
+      if (on && active) {
+        const h = s.interchange ? PROD_Y - ENG_Y + 64 : 58;
+        make("rect", { class: "halo", x: s.x - 29, y: (s.interchange ? ENG_Y : s.y) - 29, width: 58, height: h, rx: 29 }, g);
+      }
+      const top = s.below ? s.y + 44 : 88;
+      const badge = make("g", { class: "badge", visibility: on ? "hidden" : "visible" }, g);
+      make("circle", { cx: s.x, cy: top, r: 15 }, badge);
+      text(badge, s.x, top + 5, "", String(s.n));
+      if (!active) {
+        text(g, s.x, top + 40, "name", s.name);
+        s.desc.forEach((line, i) => text(g, s.x, top + 63 + i * 20, "desc", line));
+      } else if (on) {
+        const nameY = top + 46;
+        text(g, s.x, nameY, "name big", s.name);
+        s.desc.forEach((line, i) => text(g, s.x, nameY + 34 + i * 28, "desc big", line));
+      }
+      if (onSelect) {
+        g.setAttribute("tabindex", "0");
+        g.setAttribute("role", "link");
+        g.setAttribute("aria-label", `Stop ${s.n}: ${s.name}`);
+        g.addEventListener("click", () => onSelect(s.slide));
+        g.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onSelect(s.slide); } });
+      }
+    }
+    return svg;
+  }
+
+  const slides = [...document.querySelectorAll(".slide")];
+  const goToTitle = (title) => show(slides.findIndex((s) => s.dataset.title === title));
+  document.querySelectorAll("[data-map]").forEach((host) => {
+    const key = host.dataset.map;
+    host.append(key === "full" ? buildMap(null, goToTitle) : buildMap(Number(key)));
+  });
+
+  let current = 0;
+  function show(index) {
+    if (index < 0 || index >= slides.length) return;
+    slides[current].classList.remove("is-active");
+    current = index;
+    slides[current].classList.add("is-active");
+    slides[current].querySelectorAll(".count").forEach((c) => { c.textContent = `${current + 1} / ${slides.length}`; });
+    history.replaceState(null, "", `#${current + 1}`);
+  }
+
+  function fit() {
+    const stage = document.getElementById("stage");
+    const scale = Math.min(window.innerWidth / 1600, window.innerHeight / 900);
+    stage.style.transform = `scale(${scale})`;
+  }
+
+  document.addEventListener("keydown", (e) => {
+    if (e.target.closest && e.target.closest(".st, button")) return;
+    if (["ArrowRight", "PageDown", " "].includes(e.key)) { e.preventDefault(); show(current + 1); }
+    if (["ArrowLeft", "PageUp"].includes(e.key)) { e.preventDefault(); show(current - 1); }
+    if (e.key === "Home") show(0);
+    if (e.key === "End") show(slides.length - 1);
+    if (e.key === "m") goToTitle("System map");
+    if (e.key === "f") document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+  });
+  document.querySelectorAll("[data-go]").forEach((b) => b.addEventListener("click", () => show(current + Number(b.dataset.go))));
+  window.addEventListener("resize", fit);
+
+  document.querySelectorAll("[data-pace]").forEach((button) => button.addEventListener("click", () => {
+    const pace = button.dataset.pace;
+    document.querySelectorAll("[data-pace]").forEach((b) => b.setAttribute("aria-pressed", String(b === button)));
+    document.querySelectorAll("[data-std][data-fast]").forEach((node) => { node.textContent = node.dataset[pace]; });
+  }));
+
+  fit();
+  const start = Number(location.hash.slice(1)) - 1;
+  slides[0].classList.add("is-active");
+  show(Number.isInteger(start) && start >= 0 ? start : 0);
+})();
+</script>
+</body>
+</html>
