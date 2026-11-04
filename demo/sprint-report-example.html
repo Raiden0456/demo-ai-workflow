@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sprint report</title>
+<style>
+  .viz-root {
+    color-scheme: light;
+    --page: #f9f9f7;
+    --surface-1: #fcfcfb;
+    --text-primary: #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted: #898781;
+    --hairline: #e1e0d9;
+    --ring: rgba(11, 11, 11, 0.10);
+    --track: #cde2fb;
+    --accent: #2a78d6;
+    --series-1: #2a78d6;
+    --series-2: #eb6834;
+    --series-3: #1baf7a;
+    --series-4: #eda100;
+    --series-5: #e87ba4;
+    --status-good: #0ca30c;
+    --status-warning: #fab219;
+    --status-serious: #ec835a;
+    --status-critical: #d03b3b;
+    --chip: #f0efec;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) .viz-root {
+      color-scheme: dark;
+      --page: #0d0d0d;
+      --surface-1: #1a1a19;
+      --text-primary: #f0efec;
+      --text-secondary: #c3c2b7;
+      --hairline: #2c2c2a;
+      --ring: rgba(255, 255, 255, 0.10);
+      --track: #184f95;
+      --accent: #3987e5;
+      --series-1: #3987e5;
+      --series-2: #d95926;
+      --series-3: #199e70;
+      --series-4: #c98500;
+      --series-5: #d55181;
+      --chip: #383835;
+    }
+  }
+  :root[data-theme="dark"] .viz-root {
+    color-scheme: dark;
+    --page: #0d0d0d;
+    --surface-1: #1a1a19;
+    --text-primary: #f0efec;
+    --text-secondary: #c3c2b7;
+    --hairline: #2c2c2a;
+    --ring: rgba(255, 255, 255, 0.10);
+    --track: #184f95;
+    --accent: #3987e5;
+    --series-1: #3987e5;
+    --series-2: #d95926;
+    --series-3: #199e70;
+    --series-4: #c98500;
+    --series-5: #d55181;
+    --chip: #383835;
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  .viz-root {
+    min-height: 100vh;
+    background: var(--page);
+    color: var(--text-primary);
+    font: 14px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+    padding: 32px 24px 48px;
+  }
+  .wrap { max-width: 1040px; margin: 0 auto; display: grid; gap: 16px; }
+  .card { background: var(--surface-1); border: 1px solid var(--ring); border-radius: 12px; padding: 20px 24px; min-width: 0; overflow-x: auto; }
+  .wrap > *, .grid-2 > * { min-width: 0; }
+  .muted { color: var(--text-muted); }
+  .secondary { color: var(--text-secondary); }
+
+  header.card { display: grid; gap: 8px; }
+  .eyebrow { font-size: 12px; color: var(--text-muted); letter-spacing: .02em; }
+  .title-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; justify-content: space-between; }
+  h1 { margin: 0; font-size: 26px; font-weight: 650; }
+  h2 { margin: 0 0 12px; font-size: 15px; font-weight: 600; }
+  .goal { margin: 0; color: var(--text-secondary); font-size: 15px; }
+  .headline { margin: 4px 0 0; font-size: 15px; }
+
+  .health { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px; background: var(--chip); font-weight: 600; font-size: 13px; }
+  .health svg, .sev svg { flex: none; }
+
+  .kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+  .tile { display: grid; gap: 6px; align-content: start; }
+  .tile .label { font-size: 13px; color: var(--text-secondary); }
+  .tile .value { font-size: 28px; font-weight: 600; line-height: 1.15; }
+  .tile .value small { font-size: 15px; font-weight: 500; color: var(--text-secondary); }
+  .tile .note { font-size: 12px; color: var(--text-muted); }
+  .meter { height: 8px; border-radius: 999px; background: var(--track); overflow: hidden; margin-top: 4px; }
+  .meter > span { display: block; height: 100%; border-radius: 999px; background: var(--accent); }
+
+  .segbar { display: flex; gap: 2px; height: 28px; margin: 4px 0 12px; position: relative; }
+  .seg { border-radius: 4px; display: flex; align-items: center; padding: 0 8px; font-size: 12px; font-weight: 600; white-space: nowrap; min-width: 0; cursor: default; outline-offset: 2px; }
+  .seg:focus-visible { outline: 2px solid var(--text-primary); }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--text-secondary); }
+  .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+  details { margin-top: 12px; font-size: 13px; }
+  summary { cursor: pointer; color: var(--text-secondary); }
+
+  .tooltip { position: fixed; pointer-events: none; background: var(--surface-1); color: var(--text-primary); border: 1px solid var(--ring); box-shadow: 0 4px 16px rgba(0,0,0,.12); border-radius: 8px; padding: 8px 10px; font-size: 12px; display: none; z-index: 10; }
+
+  .risks { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .risks li { display: grid; grid-template-columns: 110px 1fr; gap: 12px; align-items: start; }
+  .sev { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: var(--text-secondary); text-transform: capitalize; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; font-weight: 500; color: var(--text-muted); padding: 6px 8px; border-bottom: 1px solid var(--hairline); }
+  td { padding: 8px; border-bottom: 1px solid var(--hairline); vertical-align: top; overflow-wrap: anywhere; }
+  td.key, td.num { overflow-wrap: normal; }
+  tr:last-child td { border-bottom: 0; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .key { font-weight: 600; white-space: nowrap; }
+  .chip { display: inline-block; padding: 1px 8px; border-radius: 999px; background: var(--chip); font-size: 11px; font-weight: 600; color: var(--text-secondary); margin: 2px 4px 0 0; white-space: nowrap; }
+  .sub { color: var(--text-muted); font-size: 12px; margin-top: 2px; }
+  .empty { color: var(--text-muted); font-size: 13px; margin: 0; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
+
+  @media (max-width: 760px) {
+    .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid-2 { grid-template-columns: 1fr; }
+    .risks li { grid-template-columns: 1fr; gap: 2px; }
+    .viz-root { padding: 16px 12px 32px; }
+    .card { padding: 16px; }
+    .segbar { flex-wrap: nowrap; }
+  }
+</style>
+</head>
+<body>
+<div class="viz-root">
+  <main class="wrap" id="app"></main>
+  <div class="tooltip" id="tooltip" role="tooltip"></div>
+</div>
+
+<script id="report-data" type="application/json">{"generatedAt": "2026-11-04", "sprint": {"name": "DEMO Sprint 14", "goal": "Ship invoice payment flow and harden tenant isolation", "startDate": "2026-10-26", "endDate": "2026-11-06", "committedPoints": 33}, "health": "at-risk", "headline": "13 of 33 points are done with 2 days left; Entra ID migration (8 pts) is blocked on OPS-77 and will not land this sprint.", "issues": [{"key": "DEMO-101", "summary": "Invoice issue endpoint", "status": "Done", "assignee": "Aoife Byrne", "storyPoints": 3, "updated": "2026-10-29", "flagged": false, "addedAfterSprintStart": false, "blockedBy": null, "lastComment": null}, {"key": "DEMO-102", "summary": "Tenant-scoped invoice repository", "status": "Done", "assignee": "Cian Murphy", "storyPoints": 5, "updated": "2026-10-30", "flagged": false, "addedAfterSprintStart": false, "blockedBy": null, "lastComment": null}, {"key": "DEMO-103", "summary": "Fix currency rounding on PDF export", "status": "Done", "assignee": "Niamh Kelly", "storyPoints": 2, "updated": "2026-10-31", "flagged": false, "addedAfterSprintStart": false, "blockedBy": null, "lastComment": null}, {"key": "DEMO-104", "summary": "Void endpoint for admins", "status": "Done", "assignee": "Aoife Byrne", "storyPoints": 2, "updated": "2026-11-02", "flagged": false, "addedAfterSprintStart": false, "blockedBy": null, "lastComment": null}, {"key": "DEMO-105", "summary": "Migrate auth to Entra ID", "status": "Blocked", "assignee": "Sean O'Brien", "storyPoints": 8, "updated": "2026-10-28", "flagged": true, "addedAfterSprintStart": false, "blockedBy": "OPS-77", "lastComment": "Waiting on OPS-77: tenant admin consent for the app registration."}, {"key": "DEMO-106", "summary": "Android: show invoice status badge", "status": "In Progress", "assignee": "Ciara Walsh", "storyPoints": 3, "updated": "2026-11-03", "flagged": false, "addedAfterSprintStart": false, "blockedBy": null, "lastComment": null}, {"key": "DEMO-107", "summary": "Azure Monitor alerts for 5xx spikes", "status": "In Progress", "assignee": "Cian Murphy", "storyPoints": 3, "updated": "2026-10-27", "flagged": false, "addedAfterSprintStart": false, "blockedBy": null, "lastComment": null}, {"key": "DEMO-108", "summary": "Validate currency against supported list", "status": "In Review", "assignee": "Niamh Kelly", "storyPoints": 1, "updated": "2026-11-03", "flagged": false, "addedAfterSprintStart": false, "blockedBy": null, "lastComment": null}, {"key": "DEMO-109", "summary": "Load test invoice list for 10k invoices per tenant", "status": "To Do", "assignee": "Sean O'Brien", "storyPoints": 2, "updated": "2026-10-26", "flagged": false, "addedAfterSprintStart": false, "blockedBy": null, "lastComment": null}, {"key": "DEMO-110", "summary": "Customer asked for CSV export of invoices", "status": "To Do", "assignee": null, "storyPoints": 3, "updated": "2026-11-02", "flagged": false, "addedAfterSprintStart": true, "blockedBy": null, "lastComment": null}, {"key": "DEMO-111", "summary": "Flaky test: InvoiceEndpointsTests.Issuing_twice", "status": "Done", "assignee": "Ciara Walsh", "storyPoints": 1, "updated": "2026-11-01", "flagged": false, "addedAfterSprintStart": false, "blockedBy": null, "lastComment": null}, {"key": "DEMO-112", "summary": "Mark invoice as paid", "status": "In Progress", "assignee": "Aoife Byrne", "storyPoints": 3, "updated": "2026-11-04", "flagged": false, "addedAfterSprintStart": false, "blockedBy": null, "lastComment": null}], "risks": [{"severity": "critical", "text": "DEMO-105 Entra ID migration (8 pts) is blocked by OPS-77 since 28 Oct. Escalate admin consent with Ops today or move it out of the sprint."}, {"severity": "serious", "text": "DEMO-107 Azure Monitor alerts has had no update for 8 days. Cian should confirm status at stand-up."}, {"severity": "warning", "text": "DEMO-110 CSV export (3 pts) was added mid-sprint and has no assignee."}, {"severity": "warning", "text": "20 points remain with 2 days left; DEMO-109 load test is unlikely to start."}]}</script>
+<script>
+(() => {
+  const data = JSON.parse(document.getElementById("report-data").textContent);
+  const app = document.getElementById("app");
+  const tooltip = document.getElementById("tooltip");
+  const STALE_DAYS = 5;
+  const DAY = 86400000;
+
+  const el = (tag, attrs = {}, ...children) => {
+    const node = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs)) {
+      if (k === "class") node.className = v;
+      else if (k === "style") node.style.cssText = v;
+      else node.setAttribute(k, v);
+    }
+    for (const child of children.flat()) {
+      if (child == null || child === false) continue;
+      node.append(child instanceof Node ? child : document.createTextNode(String(child)));
+    }
+    return node;
+  };
+
+  const svg = (markup) => {
+    const t = document.createElement("template");
+    t.innerHTML = markup.trim();
+    return t.content.firstChild;
+  };
+
+  const ICONS = {
+    good: '<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" style="fill:var(--status-good)"/><path d="M4.8 8.2l2.1 2.1 4.3-4.6" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    warning: '<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.5l7 12.5H1z" style="fill:var(--status-warning)"/><path d="M8 6v4" stroke="#0b0b0b" stroke-width="1.6" stroke-linecap="round"/><circle cx="8" cy="12" r=".9" fill="#0b0b0b"/></svg>',
+    serious: '<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><rect x="1.5" y="1.5" width="13" height="13" rx="3" style="fill:var(--status-serious)"/><path d="M8 4.5v4.5" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/><circle cx="8" cy="11.5" r="1" fill="#fff"/></svg>',
+    critical: '<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M5.2 1h5.6L15 5.2v5.6L10.8 15H5.2L1 10.8V5.2z" style="fill:var(--status-critical)"/><path d="M5.6 5.6l4.8 4.8M10.4 5.6l-4.8 4.8" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></svg>',
+  };
+
+  const HEALTH = {
+    "on-track": { icon: "good", label: "On track" },
+    "at-risk": { icon: "warning", label: "At risk" },
+    "off-track": { icon: "critical", label: "Off track" },
+  };
+
+  const GROUPS = [
+    { name: "Done", statuses: ["done"], color: "var(--series-1)", ink: "#ffffff" },
+    { name: "In review", statuses: ["in review"], color: "var(--series-2)", ink: "#ffffff" },
+    { name: "In progress", statuses: ["in progress"], color: "var(--series-3)", ink: "#ffffff" },
+    { name: "Blocked", statuses: ["blocked"], color: "var(--series-4)", ink: "#0b0b0b" },
+    { name: "To do", statuses: ["to do", "open", "backlog"], color: "var(--series-5)", ink: "#ffffff" },
+  ];
+
+  const toDate = (s) => new Date(`${s}T00:00:00Z`);
+  const today = toDate(data.generatedAt);
+  const sprint = data.sprint;
+  const issues = data.issues.map((i) => ({
+    ...i,
+    statusKey: String(i.status).toLowerCase(),
+    points: Number(i.storyPoints) || 0,
+    idleDays: i.updated ? Math.max(0, Math.round((today - toDate(i.updated)) / DAY)) : null,
+  }));
+  const groupOf = (issue) => GROUPS.find((g) => g.statuses.includes(issue.statusKey)) ?? GROUPS[4];
+  const sumPoints = (list) => list.reduce((acc, i) => acc + i.points, 0);
+  const isActive = (i) => i.statusKey === "in progress" || i.statusKey === "in review";
+  const isStale = (i) => isActive(i) && i.idleDays !== null && i.idleDays >= STALE_DAYS;
+
+  const byGroup = GROUPS.map((g) => ({ ...g, items: issues.filter((i) => groupOf(i) === g) }))
+    .map((g) => ({ ...g, points: sumPoints(g.items) }));
+  const totalPoints = sumPoints(issues);
+  const donePoints = byGroup[0].points;
+  const addedPoints = sumPoints(issues.filter((i) => i.addedAfterSprintStart));
+  const committed = Number(sprint.committedPoints) || totalPoints - addedPoints;
+  const blocked = byGroup[3];
+  const daysLeft = Math.max(0, Math.round((toDate(sprint.endDate) - today) / DAY));
+  const sprintDays = Math.max(1, Math.round((toDate(sprint.endDate) - toDate(sprint.startDate)) / DAY));
+  const fmtDate = (s) => toDate(s).toLocaleDateString("en-GB", { day: "numeric", month: "short", timeZone: "UTC" });
+  const plural = (n, word) => `${n} ${word}${n === 1 ? "" : "s"}`;
+  const pct = (part, whole) => (whole ? Math.round((part / whole) * 100) : 0);
+
+  const health = HEALTH[data.health] ?? HEALTH["at-risk"];
+  const header = el("header", { class: "card" },
+    el("div", { class: "eyebrow" }, `Sprint report · ${fmtDate(sprint.startDate)} – ${fmtDate(sprint.endDate)} · generated ${fmtDate(data.generatedAt)}`),
+    el("div", { class: "title-row" },
+      el("h1", {}, sprint.name),
+      el("span", { class: "health" }, svg(ICONS[health.icon]), health.label)),
+    sprint.goal ? el("p", { class: "goal" }, `Goal: ${sprint.goal}`) : null,
+    data.headline ? el("p", { class: "headline" }, data.headline) : null);
+
+  const tile = (label, value, unit, note, meterPct) => el("div", { class: "card tile" },
+    el("div", { class: "label" }, label),
+    el("div", { class: "value" }, value, unit ? el("small", {}, ` ${unit}`) : null),
+    meterPct != null ? el("div", { class: "meter", role: "img", "aria-label": `${meterPct}% done` }, el("span", { style: `width:${Math.min(100, meterPct)}%` })) : null,
+    note ? el("div", { class: "note" }, note) : null);
+
+  const kpis = el("section", { class: "kpis", "aria-label": "Key numbers" },
+    tile("Points done", donePoints, `/ ${committed}`, `${pct(donePoints, committed)}% of committed`, pct(donePoints, committed)),
+    tile("Days left", daysLeft, `of ${sprintDays}`, `Ends ${fmtDate(sprint.endDate)}`),
+    tile("Blocked", blocked.items.length, blocked.items.length === 1 ? "issue" : "issues", `${blocked.points} points stuck`),
+    tile("Added mid-sprint", addedPoints, "pts", `${plural(issues.filter((i) => i.addedAfterSprintStart).length, "issue")} after start`));
+
+  const showTip = (e, lines) => {
+    tooltip.replaceChildren(...lines.map((l, idx) => el("div", idx === 0 ? { style: "font-weight:600" } : {}, l)));
+    tooltip.style.display = "block";
+    const x = Math.min(e.clientX + 12, window.innerWidth - tooltip.offsetWidth - 8);
+    tooltip.style.left = `${x}px`;
+    tooltip.style.top = `${e.clientY + 14}px`;
+  };
+  const hideTip = () => { tooltip.style.display = "none"; };
+
+  const parts = byGroup.filter((g) => g.points > 0);
+  const segbar = el("div", { class: "segbar", role: "list", "aria-label": "Story points by status" },
+    parts.map((g) => {
+      const share = pct(g.points, totalPoints);
+      const lines = [g.name, `${g.points} pts · ${share}%`, plural(g.items.length, "issue")];
+      const seg = el("div", {
+        class: "seg", role: "listitem", tabindex: "0",
+        "aria-label": `${g.name}: ${g.points} points, ${share}%`,
+        style: `flex:${g.points} 1 0; background:${g.color}; color:${g.ink}`,
+      }, el("span", {}, `${g.points} pts`));
+      seg.addEventListener("mousemove", (e) => showTip(e, lines));
+      seg.addEventListener("mouseleave", hideTip);
+      seg.addEventListener("focus", () => { const r = seg.getBoundingClientRect(); showTip({ clientX: r.left, clientY: r.bottom }, lines); });
+      seg.addEventListener("blur", hideTip);
+      return seg;
+    }));
+  const legend = el("div", { class: "legend" }, parts.map((g) => el("span", {}, el("i", { style: `background:${g.color}` }), g.name)));
+  const tableView = el("details", {},
+    el("summary", {}, "Table view"),
+    el("table", {},
+      el("thead", {}, el("tr", {}, el("th", {}, "Status"), el("th", { class: "num" }, "Issues"), el("th", { class: "num" }, "Points"), el("th", { class: "num" }, "Share"))),
+      el("tbody", {}, byGroup.map((g) => el("tr", {},
+        el("td", {}, g.name), el("td", { class: "num" }, g.items.length), el("td", { class: "num" }, g.points), el("td", { class: "num" }, `${pct(g.points, totalPoints)}%`))))));
+  const distribution = el("section", { class: "card" }, el("h2", {}, `Where the ${totalPoints} points are`), segbar, legend, tableView);
+
+  const fitSegmentLabels = () => {
+    for (const seg of segbar.children) {
+      const label = seg.firstChild;
+      label.style.visibility = "visible";
+      if (label.offsetWidth + 16 > seg.clientWidth) label.style.visibility = "hidden";
+    }
+  };
+
+  const risks = el("section", { class: "card" }, el("h2", {}, "Risks"),
+    (data.risks ?? []).length
+      ? el("ul", { class: "risks" }, data.risks.map((r) => {
+          const sev = ICONS[r.severity] ? r.severity : "warning";
+          return el("li", {}, el("span", { class: "sev" }, svg(ICONS[sev]), sev), el("span", {}, r.text));
+        }))
+      : el("p", { class: "empty" }, "No risks identified."));
+
+  const chips = (i) => [
+    isStale(i) ? el("span", { class: "chip" }, `Stale · ${i.idleDays}d`) : null,
+    i.flagged ? el("span", { class: "chip" }, "Flagged") : null,
+    i.addedAfterSprintStart ? el("span", { class: "chip" }, "Added mid-sprint") : null,
+    !i.assignee ? el("span", { class: "chip" }, "Unassigned") : null,
+  ];
+
+  const issueTable = (title, list, extra) => el("section", { class: "card" },
+    el("h2", {}, `${title} · ${list.length}`),
+    list.length
+      ? el("table", {},
+          el("thead", {}, el("tr", {}, el("th", {}, "Key"), el("th", {}, "Summary"), el("th", {}, "Assignee"), el("th", { class: "num" }, "Pts"))),
+          el("tbody", {}, list.map((i) => el("tr", {},
+            el("td", { class: "key" }, i.key),
+            el("td", {}, i.summary, el("div", {}, chips(i)), extra ? extra(i) : null),
+            el("td", { class: "secondary" }, i.assignee ?? "—"),
+            el("td", { class: "num" }, i.points)))))
+      : el("p", { class: "empty" }, "Nothing here."));
+
+  const blockedExtra = (i) => [
+    i.blockedBy ? el("div", { class: "sub" }, `Blocked by ${i.blockedBy}`) : null,
+    i.lastComment ? el("div", { class: "sub" }, `“${i.lastComment}”`) : null,
+  ];
+  const activeExtra = (i) => el("div", { class: "sub" }, `${i.status} · updated ${i.idleDays ?? "?"}d ago`);
+
+  app.append(
+    header,
+    kpis,
+    el("div", { class: "grid-2" }, distribution, risks),
+    issueTable("Blocked", blocked.items, blockedExtra),
+    issueTable("In progress & review", issues.filter(isActive).sort((a, b) => (b.idleDays ?? 0) - (a.idleDays ?? 0)), activeExtra),
+    issueTable("To do", byGroup[4].items),
+    issueTable("Completed", byGroup[0].items));
+
+  fitSegmentLabels();
+  window.addEventListener("resize", fitSegmentLabels);
+})();
+</script>
+</body>
+</html>

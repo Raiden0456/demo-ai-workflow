@@ -1,32 +1,39 @@
 ---
 name: sprint-report
-description: Builds a sprint status report from Jira for the PM and stand-up. Use when asked for a sprint report, sprint status or burn-down summary.
-disable-model-invocation: true
-allowed-tools: mcp__jira__get_active_sprint, mcp__jira__search_issues, mcp__jira__get_issue
+description: Builds a visual HTML sprint report from Jira for PMs and stand-ups. Use when asked for a sprint report, sprint status, sprint health or what is blocked in the current sprint.
+allowed-tools: mcp__jira__get_active_sprint, mcp__jira__search_issues, mcp__jira__get_issue, Read, Write
 ---
 
-Build a report for the active sprint using only the `jira` MCP server. Never change issues.
+Build a report for the active sprint from Jira. Read-only: never change issues.
 
-1. Fetch the active sprint and all its issues.
-2. For every Blocked or flagged issue, fetch details and comments to find the blocker.
-3. Use the sprint end date and today's date to compute days left.
+## 1. Collect
+- Fetch the active sprint and all its issues (Jira MCP or the Atlassian connector, whichever is available).
+- For every Blocked or flagged issue fetch details and comments to find the blocker and the last comment.
 
-Output exactly these sections, in Markdown, short and scannable:
+## 2. Build the data JSON
+Map Jira fields to exactly this shape. Do not invent values; use `null` when a field is missing.
 
-## <Sprint name> — <days left> days left
-Goal: <goal>
-Points: <done> / <committed> done, <added mid-sprint> added after start
+```json
+{
+  "generatedAt": "YYYY-MM-DD (today)",
+  "sprint": { "name": "", "goal": "", "startDate": "YYYY-MM-DD", "endDate": "YYYY-MM-DD", "committedPoints": 0 },
+  "health": "on-track | at-risk | off-track",
+  "headline": "One sentence for a PM: where the sprint stands and the single biggest risk.",
+  "issues": [
+    { "key": "", "summary": "", "status": "Done | In Review | In Progress | Blocked | To Do", "assignee": null,
+      "storyPoints": 0, "updated": "YYYY-MM-DD", "flagged": false, "addedAfterSprintStart": false,
+      "blockedBy": null, "lastComment": null }
+  ],
+  "risks": [ { "severity": "critical | serious | warning", "text": "Concrete risk with issue keys and who should act." } ]
+}
+```
 
-## Completed
-Key, summary, assignee.
+- `health`: off-track if done + in-review points cannot realistically reach committed points in the days left or a goal-critical item is blocked; at-risk if anything is blocked, stale (no update for 5+ days) or scope was added mid-sprint; otherwise on-track.
+- `risks`: at most 5, most severe first. Cover blocked high-point items, stale work, unassigned items, mid-sprint scope, points left vs days left.
+- The template computes all numbers, stale flags and charts itself. Only provide raw issue data.
 
-## In progress / In review
-Key, summary, assignee, days since last update. Mark items not updated for 5+ days as stale.
+## 3. Render
+Take `template.html` from this skill's folder and replace the `__REPORT_DATA__` placeholder with the JSON (escape every `</` as `<\/`). Change nothing else in the template.
 
-## Blocked
-Key, summary, assignee, blocked by, last comment.
-
-## Risks
-Max 5 bullets: blocked high-point items, stale work, unassigned items, scope added mid-sprint, points left vs days left. Say plainly if the sprint goal is at risk.
-
-Do not invent data. If a field is missing, say so.
+- **Claude app (claude.ai / Desktop):** return the filled template as a single HTML artifact titled "<sprint name> report".
+- **Claude Code:** write it to `reports/sprint-<sprint id or name>.html`, then reply with the file path, the headline and the risks as a short list.
