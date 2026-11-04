@@ -1,0 +1,151 @@
+{
+  "sprint": {
+    "id": 14,
+    "name": "DEMO Sprint 14",
+    "goal": "Ship invoice payment flow and harden tenant isolation",
+    "startDate": "2026-10-26",
+    "endDate": "2026-11-06",
+    "committedPoints": 33
+  },
+  "issues": [
+    {
+      "key": "DEMO-101",
+      "summary": "Invoice issue endpoint",
+      "type": "Story",
+      "status": "Done",
+      "assignee": "Aoife Byrne",
+      "storyPoints": 3,
+      "updated": "2026-10-29",
+      "description": "Allow billing users to move a Draft invoice to Issued.",
+      "comments": []
+    },
+    {
+      "key": "DEMO-102",
+      "summary": "Tenant-scoped invoice repository",
+      "type": "Story",
+      "status": "Done",
+      "assignee": "Cian Murphy",
+      "storyPoints": 5,
+      "updated": "2026-10-30",
+      "description": "Every read and write of invoices must be scoped to the caller's tenant.",
+      "comments": []
+    },
+    {
+      "key": "DEMO-103",
+      "summary": "Fix currency rounding on PDF export",
+      "type": "Bug",
+      "status": "Done",
+      "assignee": "Niamh Kelly",
+      "storyPoints": 2,
+      "updated": "2026-10-31",
+      "description": "Amounts like 860.505 render as 860.50 instead of 860.51.",
+      "comments": []
+    },
+    {
+      "key": "DEMO-104",
+      "summary": "Void endpoint for admins",
+      "type": "Story",
+      "status": "Done",
+      "assignee": "Aoife Byrne",
+      "storyPoints": 2,
+      "updated": "2026-11-02",
+      "description": "Admins can void any invoice of their tenant that is not Paid.",
+      "comments": []
+    },
+    {
+      "key": "DEMO-105",
+      "summary": "Migrate auth to Entra ID",
+      "type": "Story",
+      "status": "Blocked",
+      "assignee": "Sean O'Brien",
+      "storyPoints": 8,
+      "updated": "2026-10-28",
+      "flagged": true,
+      "blockedBy": "OPS-77",
+      "description": "Replace demo header auth with Entra ID app registration and role claims.",
+      "comments": [
+        { "author": "Sean O'Brien", "created": "2026-10-28", "body": "Waiting on OPS-77: tenant admin consent for the app registration." }
+      ]
+    },
+    {
+      "key": "DEMO-106",
+      "summary": "Android: show invoice status badge",
+      "type": "Story",
+      "status": "In Progress",
+      "assignee": "Ciara Walsh",
+      "storyPoints": 3,
+      "updated": "2026-11-03",
+      "description": "Display Draft/Issued/Paid/Void badge in the invoice list on Android.",
+      "comments": []
+    },
+    {
+      "key": "DEMO-107",
+      "summary": "Azure Monitor alerts for 5xx spikes",
+      "type": "Task",
+      "status": "In Progress",
+      "assignee": "Cian Murphy",
+      "storyPoints": 3,
+      "updated": "2026-10-27",
+      "description": "Alert the on-call channel when 5xx rate exceeds 2% over 5 minutes.",
+      "comments": []
+    },
+    {
+      "key": "DEMO-108",
+      "summary": "Validate currency against supported list",
+      "type": "Bug",
+      "status": "In Review",
+      "assignee": "Niamh Kelly",
+      "storyPoints": 1,
+      "updated": "2026-11-03",
+      "description": "API accepted any 3-letter currency code.",
+      "comments": []
+    },
+    {
+      "key": "DEMO-109",
+      "summary": "Load test invoice list for 10k invoices per tenant",
+      "type": "Task",
+      "status": "To Do",
+      "assignee": "Sean O'Brien",
+      "storyPoints": 2,
+      "updated": "2026-10-26",
+      "description": "k6 script against staging; target p95 < 300 ms.",
+      "comments": []
+    },
+    {
+      "key": "DEMO-110",
+      "summary": "Customer asked for CSV export of invoices",
+      "type": "Story",
+      "status": "To Do",
+      "assignee": null,
+      "storyPoints": 3,
+      "updated": "2026-11-02",
+      "addedAfterSprintStart": true,
+      "description": "Urgent request from Northwind. Added mid-sprint by PM.",
+      "comments": []
+    },
+    {
+      "key": "DEMO-111",
+      "summary": "Flaky test: InvoiceEndpointsTests.Issuing_twice",
+      "type": "Bug",
+      "status": "Done",
+      "assignee": "Ciara Walsh",
+      "storyPoints": 1,
+      "updated": "2026-11-01",
+      "description": "Shared state between tests caused intermittent 409s.",
+      "comments": []
+    },
+    {
+      "key": "DEMO-112",
+      "summary": "Mark invoice as paid",
+      "type": "Story",
+      "status": "In Progress",
+      "assignee": "Aoife Byrne",
+      "storyPoints": 3,
+      "updated": "2026-11-04",
+      "description": "Finance needs to record payment of an issued invoice.\n\nAcceptance criteria:\n- POST /invoices/{id}/pay marks the invoice as Paid and sets PaidAt.\n- Only users with the billing or admin role may call it.\n- The invoice must belong to the caller's tenant; otherwise respond 404.\n- Only Issued invoices can be paid; Draft, Paid and Void respond 409.\n- Endpoint and domain tests cover all of the above.",
+      "comments": [
+        { "author": "Product", "created": "2026-11-03", "body": "Reconciliation job will rely on PaidAt, please keep it UTC." }
+      ]
+    }
+  ]
+}
