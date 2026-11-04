@@ -14,4 +14,4 @@ Implement Jira ticket $ARGUMENTS.
 5. Run `dotnet build -warnaserror` and `dotnet test`. Fix until green.
 6. Report: acceptance criteria with ✅/❌, files changed, test results.
 
-Never commit, push or open a PR. A human does that after reviewing the diff.
+Do not commit, push or open a PR unless the developer asks for it after reviewing the diff.

@@ -16,7 +16,8 @@ Multi-tenant invoicing API used to demo a team-wide Claude Code setup. Stack: .N
 ## Workflow
 - Tickets live in Jira (`jira` MCP server). Start work with `/implement-ticket <KEY>`.
 - Before a PR run `/review-pr`. Every AI reviewer in CI (Claude or Copilot) uses the same `REVIEW.md`.
-- Push, merge, PR approval and secrets access are enforced by `.claude/settings.json` and `.claude/hooks/`, not by this file.
+- Work on feature branches. Push, PR creation and merge ask for confirmation; GitHub still requires a human approval and green CI to merge.
+- Pushing to master, force pushes, `--admin` merges, PR approvals and secrets are blocked by `.claude/settings.json` and `.claude/hooks/`.
 
 ## Team setup
 - Shared, committed: `CLAUDE.md`, `.claude/settings.json`, `.claude/skills/`, `.claude/hooks/`, `.mcp.json`.

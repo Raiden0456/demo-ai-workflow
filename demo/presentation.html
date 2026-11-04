@@ -9,14 +9,22 @@
     --paper: #eef2f4;
     --paper-2: #e3e9ed;
     --card: #f8fafb;
+    --white: #ffffff;
     --ink: #17202b;
     --ink-2: #4a5563;
     --muted: #7a8594;
     --hair: #cfd8de;
     --eng: #0b6e99;
+    --eng-soft: #d7e8f0;
     --prod: #d99a00;
     --gate: #c8323a;
+    --gate-soft: #f6dcdd;
     --auto: #6250d6;
+    --auto-soft: #e4e0f8;
+    --good: #138a36;
+    --good-soft: #dcefe2;
+    --warn: #a86b00;
+    --warn-soft: #f6ead0;
     --zone: #dde5ea;
     --font: "Avenir Next", "Avenir", "Segoe UI", system-ui, sans-serif;
     --mono: "SF Mono", Menlo, Consolas, monospace;
@@ -28,14 +36,15 @@
   .viewport { position: fixed; inset: 0; display: grid; place-items: center; }
   .stage { width: 1600px; height: 900px; position: relative; background: var(--paper); transform-origin: center; flex: none; }
 
-  .slide { position: absolute; inset: 0; padding: 72px 88px 64px; display: none; }
+  .slide { position: absolute; inset: 0; padding: 64px 88px 64px; display: none; }
   .slide.is-active { display: block; animation: show .18s ease-out; }
   @keyframes show { from { opacity: 0; } to { opacity: 1; } }
 
   h1, h2, h3, p { margin: 0; }
   h1 { font-size: 76px; line-height: 1.04; font-weight: 600; letter-spacing: -0.02em; max-width: 15ch; }
-  h2 { font-size: 46px; line-height: 1.1; font-weight: 600; letter-spacing: -0.015em; }
+  h2 { font-size: 44px; line-height: 1.1; font-weight: 600; letter-spacing: -0.015em; }
   .lead { font-size: 25px; line-height: 1.45; color: var(--ink-2); max-width: 34ch; }
+  code, .mono { font-family: var(--mono); }
 
   .footer { position: absolute; left: 88px; bottom: 28px; display: flex; gap: 24px; font-size: 15px; color: var(--muted); }
 
@@ -47,37 +56,149 @@
 
   .map-slide { display: grid; grid-template-rows: auto 1fr; gap: 20px; }
   .map-slide .head { display: flex; align-items: baseline; justify-content: space-between; gap: 32px; }
-  .map-slide .head p { font-size: 19px; color: var(--ink-2); max-width: 52ch; text-align: right; }
+  .map-slide .head p { font-size: 19px; color: var(--ink-2); text-align: right; }
   .map { width: 100%; height: auto; display: block; }
   .map-slide .map { width: auto; height: 640px; max-width: 100%; margin: 0 auto; }
 
-  .legend { display: flex; gap: 32px; font-size: 16px; color: var(--ink-2); margin-top: 4px; }
+  .legend { display: flex; gap: 32px; font-size: 16px; color: var(--ink-2); margin-top: 6px; }
   .legend span { display: inline-flex; align-items: center; gap: 10px; white-space: nowrap; }
   .legend i { width: 34px; height: 8px; border-radius: 4px; display: inline-block; }
   .legend .auto-key { background: repeating-linear-gradient(90deg, var(--auto) 0 10px, transparent 10px 16px); }
   .legend .gate-key { width: 18px; height: 18px; border-radius: 50%; border: 4px solid var(--gate); background: #fff; }
 
-  .station-slide { display: grid; grid-template-columns: 720px 1fr; gap: 72px; align-items: center; height: 100%; }
-  .station-slide .mini { background: var(--card); border: 1px solid var(--hair); border-radius: 20px; padding: 24px 20px; }
-  .station-slide .body { display: grid; gap: 26px; align-content: center; }
-  .stop { display: flex; align-items: center; gap: 16px; font-size: 18px; color: var(--ink-2); }
-  .stop b { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-size: 19px; font-weight: 600; background: var(--ink); }
+  .st-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 48px; }
+  .st-head h2 { margin-top: 14px; max-width: 24ch; }
+  .st-head .mini { width: 300px; flex: none; background: var(--card); border: 1px solid var(--hair); border-radius: 14px; padding: 8px 10px; }
+  .stop { display: flex; align-items: center; gap: 14px; font-size: 17px; color: var(--ink-2); }
+  .stop b { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-size: 17px; font-weight: 600; background: var(--ink); }
   .stop.gate b { background: var(--gate); }
   .stop.auto b { background: var(--auto); }
-  .pace { display: inline-flex; gap: 4px; padding: 4px; border-radius: 12px; background: var(--paper-2); margin-top: 20px; }
-  .pace button { font: 600 16px var(--font); color: var(--ink-2); background: transparent; border: 0; border-radius: 9px; padding: 10px 18px; cursor: pointer; }
-  .pace button[aria-pressed="true"] { background: #fff; color: var(--ink); box-shadow: 0 1px 2px rgba(23,32,43,.12); }
-  .pace button:focus-visible { outline: 3px solid var(--eng); outline-offset: 2px; }
-  .points { list-style: none; padding: 0; margin: 0; display: grid; gap: 16px; font-size: 21px; line-height: 1.45; }
-  .points li { padding-left: 26px; position: relative; max-width: 40ch; }
-  .points li::before { content: ""; position: absolute; left: 0; top: 0.62em; width: 10px; height: 10px; border-radius: 50%; border: 3px solid var(--ink); background: #fff; }
-  .demo { border-left: 4px solid var(--ink); padding: 4px 0 4px 20px; display: grid; gap: 10px; }
-  .demo h3 { font-size: 16px; font-weight: 600; color: var(--ink-2); }
-  .demo div { display: flex; flex-wrap: wrap; gap: 10px; }
-  code { font-family: var(--mono); font-size: 16px; background: var(--paper-2); color: var(--ink); padding: 5px 10px; border-radius: 6px; }
+
+  .st-body { display: grid; grid-template-columns: 1fr 430px; gap: 56px; margin-top: 36px; align-items: start; }
+  .side { display: grid; gap: 28px; padding-top: 6px; }
+  .points { list-style: none; padding: 0; margin: 0; display: grid; gap: 16px; font-size: 19px; line-height: 1.45; }
+  .points li { padding-left: 26px; position: relative; }
+  .points li::before { content: ""; position: absolute; left: 0; top: 0.6em; width: 10px; height: 10px; border-radius: 50%; border: 3px solid var(--ink); background: #fff; }
+  .points code { font-size: .88em; background: var(--paper-2); padding: 1px 6px; border-radius: 5px; white-space: nowrap; }
+  .demo { border-left: 4px solid var(--ink); padding: 4px 0 4px 18px; display: grid; gap: 10px; }
+  .demo h3 { font-size: 15px; font-weight: 600; color: var(--ink-2); }
+  .demo div { display: flex; flex-wrap: wrap; gap: 8px; }
+  .demo code { font-size: 15px; background: var(--paper-2); padding: 5px 10px; border-radius: 6px; }
+
+  .panel { background: var(--white); border: 1px solid var(--hair); border-radius: 16px; overflow: hidden; }
+  .panel-head { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 14px 20px; border-bottom: 1px solid var(--hair); font-size: 15px; color: var(--muted); }
+  .panel-head strong { color: var(--ink); font-size: 17px; font-weight: 600; }
+  .console { background: var(--ink); color: #e6ebef; font: 15px/1.7 var(--mono); border-radius: 16px; padding: 18px 22px; white-space: pre; }
+  .console .you { color: #9ec5f4; }
+  .console .dim { color: #8b97a5; }
+  .console .bad { color: #ff9a9e; }
+  .console .ok { color: #8fe0a0; }
+
+  .chip { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; padding: 3px 10px; border-radius: 999px; background: var(--paper-2); color: var(--ink-2); white-space: nowrap; }
+  .chip::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--muted); }
+  .chip.claude::before { background: var(--eng); }
+  .chip.app::before { background: var(--prod); }
+  .chip.codex::before { background: var(--ink); }
+  .chip.copilot::before { background: var(--auto); }
+  .chip.all::before { background: linear-gradient(90deg, var(--eng) 50%, var(--prod) 50%); }
+
+  .sym { width: 22px; height: 22px; border-radius: 50%; display: inline-grid; place-items: center; color: #fff; font-size: 13px; font-weight: 700; flex: none; }
+  .sym.ok { background: var(--good); }
+  .sym.bad { background: var(--gate); }
+  .sym.ask { background: var(--warn); }
+
+  .tree .row { display: grid; grid-template-columns: 250px 1fr; align-items: center; gap: 16px; padding: 13px 20px; border-bottom: 1px solid var(--paper-2); }
+  .tree .row:last-child { border-bottom: 0; }
+  .tree .file { font: 600 16px var(--mono); display: flex; align-items: center; gap: 10px; }
+  .tree .file small { font: 400 13px var(--font); color: var(--muted); }
+  .tree .who { display: flex; flex-wrap: wrap; gap: 8px; }
+  .tree .row.personal { background: var(--card); }
+  .tree .row.personal .file { color: var(--muted); font-weight: 400; }
+  .tree .row.personal .who { color: var(--muted); font-size: 14px; }
+  .icon-file { width: 16px; height: 20px; border: 2px solid currentColor; border-radius: 3px; flex: none; opacity: .5; }
+  .icon-dir { width: 20px; height: 16px; border: 2px solid currentColor; border-radius: 3px; flex: none; opacity: .5; }
+
+  .tiers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .tier { border-radius: 14px; padding: 16px; display: grid; gap: 10px; align-content: start; }
+  .tier.allow { background: var(--good-soft); }
+  .tier.ask { background: var(--warn-soft); }
+  .tier.deny { background: var(--gate-soft); }
+  .tier h3 { display: flex; align-items: center; gap: 10px; font-size: 18px; }
+  .tier p { font-size: 14px; color: var(--ink-2); margin-bottom: 2px; }
+  .tier code { display: block; font-size: 13.5px; background: rgba(255,255,255,.75); padding: 6px 10px; border-radius: 7px; }
+  .stack { display: grid; gap: 18px; }
+
+  .flow { display: grid; grid-template-columns: 1fr 64px 1.25fr 64px 1fr; align-items: center; }
+  .node { background: var(--white); border: 1px solid var(--hair); border-radius: 16px; padding: 18px; display: grid; gap: 8px; align-content: start; min-height: 168px; }
+  .node h3 { font-size: 19px; }
+  .node p { font-size: 15px; color: var(--ink-2); line-height: 1.45; }
+  .node .tools { display: grid; gap: 6px; margin-top: 4px; }
+  .node .tools code { font-size: 13.5px; background: var(--paper-2); padding: 4px 8px; border-radius: 6px; }
+  .node.mcp { border: 2px solid var(--ink); }
+  .badge-line { display: flex; gap: 8px; flex-wrap: wrap; }
+  .tag { font-size: 12.5px; font-weight: 600; padding: 3px 9px; border-radius: 6px; background: var(--paper-2); color: var(--ink-2); }
+  .tag.good { background: var(--good-soft); color: var(--good); }
+  .tag.bad { background: var(--gate-soft); color: var(--gate); }
+  .tag.warn { background: var(--warn-soft); color: var(--warn); }
+  .link { height: 10px; border-radius: 5px; background: var(--eng); position: relative; margin: 0 6px; }
+  .link.app { background: linear-gradient(var(--eng) 0 50%, var(--prod) 50% 100%); }
+
+  .chat { display: grid; grid-template-columns: 1fr; gap: 14px; padding: 18px 20px; background: var(--card); }
+  .bubble { justify-self: end; background: var(--ink); color: #fff; padding: 12px 16px; border-radius: 16px 16px 4px 16px; font-size: 16px; }
+  .reply { font-size: 16px; color: var(--ink-2); }
+  .artifact { border: 1px solid var(--hair); border-radius: 12px; overflow: hidden; background: #fff; height: 400px; position: relative; }
+  .artifact-bar { display: flex; justify-content: space-between; padding: 8px 14px; font-size: 13px; color: var(--muted); border-bottom: 1px solid var(--hair); background: #fff; }
+  .artifact iframe { width: 1800px; height: 1600px; border: 0; transform: scale(.62); transform-origin: 0 0; pointer-events: none; }
+
+  .route { position: relative; display: grid; grid-template-columns: repeat(5, 1fr); margin: 8px 0 28px; }
+  .route::before { content: ""; position: absolute; left: 10%; right: 10%; top: 17px; height: 10px; border-radius: 5px; background: var(--eng); }
+  .route div { position: relative; display: grid; justify-items: center; text-align: center; gap: 12px; padding: 0 8px; }
+  .route i { width: 44px; height: 44px; border-radius: 50%; background: #fff; border: 5px solid var(--ink); }
+  .route .gate i { border-color: var(--gate); border-width: 7px; }
+  .route b { font-size: 17px; font-weight: 600; }
+  .route span { font-size: 14px; color: var(--ink-2); line-height: 1.4; }
+  .ac .row { display: flex; align-items: center; gap: 12px; padding: 11px 20px; border-bottom: 1px solid var(--paper-2); font-size: 16px; }
+  .ac .row:last-child { border-bottom: 0; }
+  .ac .row em { margin-left: auto; font-style: normal; font: 13px var(--mono); color: var(--muted); }
+
+  .pr-title { font-size: 19px; font-weight: 600; color: var(--ink); }
+  .pr-title span { color: var(--muted); font-weight: 400; }
+  .checks .row { display: flex; align-items: center; gap: 12px; padding: 13px 20px; border-bottom: 1px solid var(--paper-2); font-size: 16px; }
+  .checks .row small { margin-left: auto; color: var(--muted); font-size: 14px; }
+  .comment { margin: 16px 20px 20px; border: 1px solid var(--hair); border-radius: 12px; overflow: hidden; }
+  .comment .path { font: 13px var(--mono); color: var(--ink-2); padding: 8px 14px; background: var(--card); border-bottom: 1px solid var(--hair); }
+  .comment .code { font: 14px/1.6 var(--mono); padding: 8px 0; background: #fff; }
+  .comment .code div { padding: 0 14px; white-space: pre; }
+  .comment .code .hit { background: var(--gate-soft); }
+  .comment .code .ln { display: inline-block; width: 34px; color: var(--muted); }
+  .comment .body { padding: 14px; border-top: 1px solid var(--hair); display: grid; gap: 8px; font-size: 15.5px; line-height: 1.45; }
+  .comment .who { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--muted); }
+  .comment .who strong { color: var(--ink); }
+
+  .merge .row { display: flex; align-items: flex-start; gap: 14px; padding: 16px 20px; border-bottom: 1px solid var(--paper-2); }
+  .merge .row div { display: grid; gap: 2px; }
+  .merge .row strong { font-size: 17px; }
+  .merge .row span { font-size: 15px; color: var(--ink-2); }
+  .merge .actions { display: flex; align-items: center; gap: 14px; padding: 16px 20px; }
+  .btn { font: 600 15px var(--font); border-radius: 8px; padding: 10px 18px; border: 1px solid var(--hair); background: var(--card); color: var(--muted); }
+  .btn.go { background: var(--good); color: #fff; border-color: var(--good); }
+  .btn.no { background: #fff; color: var(--gate); border-color: var(--gate); }
+  .btn.off { cursor: not-allowed; }
+
+  .autos { display: grid; gap: 18px; }
+  .auto-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; align-items: stretch; position: relative; }
+  .auto-row::before { content: ""; position: absolute; left: 8%; right: 8%; top: 50%; height: 0; border-top: 8px dashed var(--auto); transform: translateY(-4px); }
+  .auto-row.three { grid-template-columns: repeat(3, 1fr); }
+  .step { position: relative; background: var(--white); border: 1px solid var(--hair); border-radius: 14px; padding: 12px 14px; margin: 0 10px; display: grid; gap: 4px; align-content: center; }
+  .step small { font-size: 12.5px; color: var(--muted); font-weight: 600; }
+  .step b { font-size: 15.5px; font-weight: 600; line-height: 1.3; }
+  .step span { font-size: 13.5px; color: var(--ink-2); line-height: 1.35; }
+  .step .btns { display: flex; gap: 6px; margin-top: 6px; }
+  .step .btns .btn { padding: 4px 10px; font-size: 13px; }
+  .auto-label { font-size: 15px; font-weight: 600; color: var(--auto); margin-bottom: -6px; }
 
   .rollout { display: grid; grid-template-rows: auto 1fr auto; gap: 40px; height: 100%; }
-  .timeline { position: relative; display: grid; grid-template-columns: repeat(6, 1fr); gap: 0; align-self: center; }
+  .timeline { position: relative; display: grid; grid-template-columns: repeat(6, 1fr); align-self: center; }
   .timeline::before { content: ""; position: absolute; left: 0; right: 0; top: 19px; height: 10px; border-radius: 5px; background: var(--eng); }
   .phase { position: relative; padding-right: 28px; }
   .phase .dot { width: 48px; height: 48px; border-radius: 50%; background: #fff; border: 5px solid var(--ink); display: grid; place-items: center; font-weight: 600; font-size: 15px; position: relative; }
@@ -85,6 +206,10 @@
   .phase h3 { margin-top: 6px; font-size: 23px; line-height: 1.25; font-weight: 600; }
   .phase p { margin-top: 10px; font-size: 17px; line-height: 1.5; color: var(--ink-2); }
   .note { font-size: 19px; color: var(--ink-2); max-width: 70ch; line-height: 1.5; }
+  .pace { display: inline-flex; gap: 4px; padding: 4px; border-radius: 12px; background: var(--paper-2); margin-top: 20px; }
+  .pace button { font: 600 16px var(--font); color: var(--ink-2); background: transparent; border: 0; border-radius: 9px; padding: 10px 18px; cursor: pointer; }
+  .pace button[aria-pressed="true"] { background: #fff; color: var(--ink); box-shadow: 0 1px 2px rgba(23,32,43,.12); }
+  .pace button:focus-visible { outline: 3px solid var(--eng); outline-offset: 2px; }
 
   .close { display: grid; grid-template-columns: 1fr 1fr; gap: 88px; align-items: center; height: 100%; }
   .close .points { font-size: 23px; }
@@ -105,15 +230,13 @@
   .st .badge circle { fill: var(--ink); }
   .st.gate .badge circle { fill: var(--gate); }
   .st .badge text { font: 600 14px var(--font); fill: #fff; }
-  .term .name { font: 600 20px var(--font); fill: var(--ink); }
-  .term .desc { font: 400 15px var(--font); fill: var(--ink-2); }
+  .termini .name { font: 600 20px var(--font); fill: var(--ink); }
+  .termini .desc { font: 400 15px var(--font); fill: var(--ink-2); }
   .mini .st { cursor: default; }
-  .mini .st:not(.on), .mini .term { opacity: .3; }
-  .mini .st .name.big { font-size: 32px; }
-  .mini .st .desc.big { font-size: 22px; }
-  .mini .zone text { opacity: .6; }
-  .mini .halo { fill: none; stroke: var(--ink); stroke-width: 3; }
+  .mini .st:not(.on), .mini .termini, .mini .line { opacity: .35; }
+  .mini .halo { fill: none; stroke: var(--ink); stroke-width: 10; }
   .mini .st.gate.on .halo { stroke: var(--gate); }
+  .mini .st.on > rect:not(.halo), .mini .st.on > circle { stroke-width: 9; }
   .draw .line:not(.auto) { stroke-dasharray: 2000; stroke-dashoffset: 2000; animation: draw 1.6s ease-out forwards; }
   .draw .line.prod { animation-delay: .35s; }
   @keyframes draw { to { stroke-dashoffset: 0; } }
@@ -145,6 +268,7 @@
         <svg class="lines-art" viewBox="0 0 520 520" aria-hidden="true">
           <path class="line eng" d="M20 170 H250 L340 260 H500" />
           <path class="line prod" d="M20 360 H140 L240 260 H340" />
+          <path class="line auto" d="M140 450 H340 V280" />
           <circle cx="250" cy="170" r="15" fill="#fff" stroke="#17202b" stroke-width="5" />
           <circle cx="140" cy="360" r="15" fill="#fff" stroke="#17202b" stroke-width="5" />
           <circle cx="340" cy="260" r="19" fill="#fff" stroke="#17202b" stroke-width="5" />
@@ -174,49 +298,87 @@
     </section>
 
     <section class="slide" data-title="Shared rules" data-stop="1">
-      <div class="station-slide">
+      <div class="st-head">
+        <div><div class="stop"><b>1</b>Shared rules</div><h2>One rulebook in the repo, read by every tool</h2></div>
         <div class="mini" data-map="1"></div>
-        <div class="body">
-          <div class="stop"><b>1</b>Shared rules</div>
-          <h2>One rulebook, stored in the repo</h2>
+      </div>
+      <div class="st-body">
+        <div class="panel tree">
+          <div class="panel-head"><strong>demo-ai-workflow</strong><span>Read by</span></div>
+          <div class="row"><span class="file"><i class="icon-file"></i>CLAUDE.md</span><span class="who"><span class="chip claude">Claude Code</span></span></div>
+          <div class="row"><span class="file"><i class="icon-file"></i>AGENTS.md</span><span class="who"><span class="chip codex">Codex</span><span class="chip copilot">Copilot</span></span></div>
+          <div class="row"><span class="file"><i class="icon-file"></i>REVIEW.md</span><span class="who"><span class="chip claude">/review-pr</span><span class="chip claude">Claude Review</span><span class="chip copilot">Copilot review</span></span></div>
+          <div class="row"><span class="file"><i class="icon-dir"></i>docs/ <small>architecture, code, tests</small></span><span class="who"><span class="chip all">Every tool</span></span></div>
+          <div class="row"><span class="file"><i class="icon-dir"></i>.claude/ <small>rules, hooks, skills</small></span><span class="who"><span class="chip claude">Claude Code</span><span class="chip app">Claude app skills</span></span></div>
+          <div class="row personal"><span class="file"><i class="icon-file"></i>CLAUDE.local.md</span><span class="who">Personal tweaks, never in git</span></div>
+        </div>
+        <div class="side">
           <ul class="points">
-            <li><code>CLAUDE.md</code> for Claude Code, <code>AGENTS.md</code> for Codex and Copilot, <code>REVIEW.md</code> for every reviewer.</li>
-            <li>Architecture, coding and testing rules live once in <code>docs/</code> and every tool reads them.</li>
-            <li>Arrives with <code>git pull</code>. Personal tweaks stay local and out of git.</li>
+            <li>Rules live once in git and arrive with <code>git pull</code>.</li>
+            <li>Each tool reads its own entry file, all pointing to the same docs.</li>
+            <li>Personal preferences stay on each laptop.</li>
           </ul>
-          <div class="demo"><h3>Live in the demo</h3><div><code>CLAUDE.md</code><code>AGENTS.md</code><code>REVIEW.md</code></div></div>
+          <div class="demo"><h3>Live in the demo</h3><div><code>CLAUDE.md</code><code>AGENTS.md</code></div></div>
         </div>
       </div>
       <div class="footer"><span>Stop 1</span><span class="count"></span></div>
     </section>
 
     <section class="slide" data-title="Guardrails" data-stop="2">
-      <div class="station-slide">
+      <div class="st-head">
+        <div><div class="stop"><b>2</b>Guardrails</div><h2>Limits the agent can't talk its way around</h2></div>
         <div class="mini" data-map="2"></div>
-        <div class="body">
-          <div class="stop"><b>2</b>Guardrails</div>
-          <h2>Limits the agent can't talk its way around</h2>
+      </div>
+      <div class="st-body">
+        <div class="stack">
+          <div class="tiers">
+            <div class="tier allow"><h3><span class="sym ok">✓</span>Runs freely</h3><p>Safe, read-only or local</p><code>dotnet build / test</code><code>git diff / add</code><code>jira: read tickets</code></div>
+            <div class="tier ask"><h3><span class="sym ask">?</span>Asks first</h3><p>You see the exact command</p><code>git commit / push</code><code>gh pr create / merge</code><code>curl, gh api</code></div>
+            <div class="tier deny"><h3><span class="sym bad">✕</span>Never</h3><p>Settings deny, hooks enforce</p><code>read .env, secrets</code><code>push to master, --force</code><code>approve a PR</code></div>
+          </div>
+          <div class="console"><span class="you">›</span> run cat .env
+<span class="dim">  Bash(cat .env)</span>
+<span class="bad">  ✕ Blocked by guard-bash.sh: secrets in .env files are off limits</span>
+<span class="you">›</span> push this to master
+<span class="dim">  Bash(git push origin master)</span>
+<span class="bad">  ✕ Blocked by guard-bash.sh: master is protected, push a feature branch</span></div>
+        </div>
+        <div class="side">
           <ul class="points">
-            <li>Permissions: safe commands run freely, commits ask first, secrets, push and merge are denied.</li>
-            <li>Hooks close the gaps, so <code>cat .env</code> is blocked even when <code>Read</code> is denied.</li>
-            <li>Every edited C# file is formatted automatically, so reviews skip style debates.</li>
+            <li><code>CLAUDE.md</code> is a request. Settings and hooks are enforcement.</li>
+            <li>Hooks close the gaps, like <code>cat .env</code> when file reads are denied.</li>
+            <li>Every edited C# file is formatted automatically.</li>
           </ul>
-          <div class="demo"><h3>Live in the demo</h3><div><code>read .env</code><code>run cat .env</code><code>push to master</code></div></div>
+          <div class="demo"><h3>Live in the demo</h3><div><code>read .env</code><code>cat .env</code><code>push to master</code></div></div>
         </div>
       </div>
       <div class="footer"><span>Stop 2</span><span class="count"></span></div>
     </section>
 
     <section class="slide" data-title="Jira via MCP" data-stop="3">
-      <div class="station-slide">
+      <div class="st-head">
+        <div><div class="stop"><b>3</b>Jira via MCP</div><h2>Jira inside the conversation</h2></div>
         <div class="mini" data-map="3"></div>
-        <div class="body">
-          <div class="stop"><b>3</b>Jira via MCP</div>
-          <h2>Jira inside the conversation</h2>
+      </div>
+      <div class="st-body">
+        <div class="stack">
+          <div class="flow">
+            <div class="node"><h3>Claude</h3><p>Code in the terminal, the app for PMs.</p><div class="badge-line"><span class="chip claude">Claude Code</span><span class="chip app">Claude app</span></div></div>
+            <div class="link app"></div>
+            <div class="node mcp"><h3>MCP server: jira</h3><div class="badge-line"><span class="tag good">Read-only</span><span class="tag">One entry in .mcp.json</span></div><div class="tools"><code>get_active_sprint</code><code>search_issues</code><code>get_issue</code></div></div>
+            <div class="link"></div>
+            <div class="node"><h3>Jira Cloud</h3><p>Each person signs in with their own account.</p><div class="badge-line"><span class="tag">Your permissions apply</span></div></div>
+          </div>
+          <div class="console"><span class="you">›</span> /sprint-report
+<span class="dim">  jira · get_active_sprint    DEMO Sprint 14, 12 issues</span>
+<span class="dim">  jira · get_issue DEMO-105    blocked by OPS-77</span>
+<span class="ok">  ✓ Saved reports/sprint-14.html</span>   At risk: 13 of 33 points done, 2 days left</div>
+        </div>
+        <div class="side">
           <ul class="points">
-            <li>Claude reads sprints, tickets and comments through MCP. Read-only by default.</li>
-            <li>Each person signs in with their own Atlassian account, so Jira permissions still apply.</li>
-            <li>The demo runs on mock data. Your Atlassian is one entry in <code>.mcp.json</code>.</li>
+            <li>Claude reads sprints, tickets and comments, not just code.</li>
+            <li>The demo runs on mock data. Your Atlassian is a one-line swap.</li>
+            <li>The same connection serves developers and PMs.</li>
           </ul>
           <div class="demo"><h3>Live in the demo</h3><div><code>/mcp</code><code>/sprint-report</code></div></div>
         </div>
@@ -225,15 +387,27 @@
     </section>
 
     <section class="slide" data-title="Skills in the Claude app" data-stop="4">
-      <div class="station-slide">
+      <div class="st-head">
+        <div><div class="stop"><b>4</b>Skills in the Claude app</div><h2>The same skills, without a terminal</h2></div>
         <div class="mini" data-map="4"></div>
-        <div class="body">
-          <div class="stop"><b>4</b>Skills in the Claude app</div>
-          <h2>The same skills, without a terminal</h2>
+      </div>
+      <div class="st-body">
+        <div class="panel">
+          <div class="panel-head"><strong>Claude</strong><span>sprint-report skill</span></div>
+          <div class="chat">
+            <div class="bubble">Give me the sprint report</div>
+            <div class="reply">Sprint 14 is at risk. DEMO-105 has been blocked by Ops for a week. Here is the full report.</div>
+            <div class="artifact">
+              <div class="artifact-bar"><span>DEMO Sprint 14 report</span><span>Interactive page</span></div>
+              <iframe src="sprint-report-example.html" title="Sprint report example" tabindex="-1" scrolling="no"></iframe>
+            </div>
+          </div>
+        </div>
+        <div class="side">
           <ul class="points">
-            <li>PMs and leads work in the Claude app or browser, as they already do.</li>
+            <li>PMs and leads ask in plain words, in the app or the browser.</li>
             <li>Admins publish skills to the whole organisation. Nobody installs anything.</li>
-            <li>The sprint report comes back as an interactive page, not a wall of text.</li>
+            <li>The answer is an interactive page, not a wall of text.</li>
           </ul>
           <div class="demo"><h3>Live in the demo</h3><div><code>“Give me the sprint report”</code></div></div>
         </div>
@@ -242,15 +416,32 @@
     </section>
 
     <section class="slide" data-title="Ticket to code" data-stop="5">
-      <div class="station-slide">
+      <div class="st-head">
+        <div><div class="stop"><b>5</b>Ticket to code</div><h2>From ticket to tested change, with a plan you approve</h2></div>
         <div class="mini" data-map="5"></div>
-        <div class="body">
-          <div class="stop"><b>5</b>Ticket to code</div>
-          <h2>From ticket to tested change, with a plan you approve</h2>
+      </div>
+      <div class="st-body">
+        <div>
+          <div class="route">
+            <div><i></i><b>Read ticket</b><span>DEMO-112 from Jira</span></div>
+            <div><i></i><b>Checklist</b><span>Acceptance criteria</span></div>
+            <div class="gate"><i></i><b>You approve</b><span>Plan before any code</span></div>
+            <div><i></i><b>Code and tests</b><span>One test per criterion</span></div>
+            <div><i></i><b>Green</b><span>Build and tests pass</span></div>
+          </div>
+          <div class="panel ac">
+            <div class="panel-head"><strong>DEMO-112 · Mark invoice as paid</strong><span>Criteria and planned tests</span></div>
+            <div class="row"><span class="sym ok">✓</span>Issued invoice becomes Paid with a UTC timestamp<em>MarkPaid_sets_PaidAt</em></div>
+            <div class="row"><span class="sym ok">✓</span>Only billing or admin roles can call it<em>Viewer_gets_403</em></div>
+            <div class="row"><span class="sym ok">✓</span>Another tenant's invoice returns 404<em>Foreign_tenant_404</em></div>
+            <div class="row"><span class="sym ok">✓</span>Draft, Paid and Void return 409<em>Wrong_status_409</em></div>
+          </div>
+        </div>
+        <div class="side">
           <ul class="points">
-            <li>Claude pulls the ticket and turns acceptance criteria into a checklist.</li>
-            <li>It stops at a plan. Code and tests come only after a developer approves it.</li>
-            <li>One test per criterion, build and tests green, nothing committed for you.</li>
+            <li>Claude turns the ticket into a checklist and stops at a plan.</li>
+            <li>Code comes only after a developer says yes.</li>
+            <li>Nothing is committed unless the developer asks.</li>
           </ul>
           <div class="demo"><h3>Live in the demo</h3><div><code>/implement-ticket DEMO-112</code></div></div>
         </div>
@@ -259,32 +450,63 @@
     </section>
 
     <section class="slide" data-title="Review gate" data-stop="6">
-      <div class="station-slide">
+      <div class="st-head">
+        <div><div class="stop"><b>6</b>Review gate</div><h2>Two checks before a person looks</h2></div>
         <div class="mini" data-map="6"></div>
-        <div class="body">
-          <div class="stop"><b>6</b>Review gate</div>
-          <h2>Two checks before a person looks</h2>
+      </div>
+      <div class="st-body">
+        <div class="panel checks">
+          <div class="panel-head"><span class="pr-title">feat(invoices): mark invoice as paid <span>#1</span></span><span class="tag warn">Changes requested</span></div>
+          <div class="row"><span class="sym ok">✓</span>CI · build, format, tests<small>Passed</small></div>
+          <div class="row"><span class="sym bad">!</span>Claude Review · REVIEW.md<small>5 findings</small></div>
+          <div class="comment">
+            <div class="path">src/Demo.Api/Invoices/InvoiceEndpoints.cs</div>
+            <div class="code">
+<div><span class="ln">40</span>            .RequireAuthorization(Policies.CanAdmin);</div>
+<div><span class="ln">41</span></div>
+<div class="hit"><span class="ln">42</span>        app.MapPost("/invoices/{id:guid}/pay", (Guid id, InvoiceStore store) =&gt;</div>
+<div><span class="ln">43</span>        {</div>
+<div class="hit"><span class="ln">44</span>            var invoice = store.GetById(id);</div>
+            </div>
+            <div class="body">
+              <div class="who"><span class="tag bad">Critical</span><strong>claude</strong> reviewed</div>
+              <div>The endpoint is mapped outside the authorised group and reads by id alone, so anyone can mark any tenant's invoice as paid.</div>
+            </div>
+          </div>
+        </div>
+        <div class="side">
           <ul class="points">
-            <li>CI builds with warnings as errors, checks formatting and runs every test.</li>
-            <li>An AI reviewer comments on each pull request. Claude, Copilot or none, one switch.</li>
-            <li>Every reviewer uses the same <code>REVIEW.md</code>, and developers run it locally first.</li>
+            <li>CI is green. The tests pass. The bug is still there.</li>
+            <li>The AI reviewer catches it: Claude, Copilot or none, one switch.</li>
+            <li>Every reviewer uses the same <code>REVIEW.md</code>.</li>
           </ul>
-          <div class="demo"><h3>Live in the demo</h3><div><code>PR: mark invoice as paid</code><code>/review-pr</code></div></div>
+          <div class="demo"><h3>Live in the demo</h3><div><code>The pull request</code><code>/review-pr</code></div></div>
         </div>
       </div>
       <div class="footer"><span>Stop 6</span><span class="count"></span></div>
     </section>
 
     <section class="slide" data-title="Human approval" data-stop="7">
-      <div class="station-slide">
+      <div class="st-head">
+        <div><div class="stop gate"><b>7</b>Human approval</div><h2>A person decides. Always.</h2></div>
         <div class="mini" data-map="7"></div>
-        <div class="body">
-          <div class="stop gate"><b>7</b>Human approval</div>
-          <h2>A person merges. Always.</h2>
+      </div>
+      <div class="st-body">
+        <div class="stack">
+          <div class="panel merge">
+            <div class="row"><span class="sym bad">✕</span><div><strong>Review required</strong><span>At least 1 approving review is required by reviewers with write access.</span></div></div>
+            <div class="row"><span class="sym ok">✓</span><div><strong>All checks have passed</strong><span>build-test, Claude Review</span></div></div>
+            <div class="actions"><button class="btn off" type="button" tabindex="-1" disabled>Merge pull request</button><span class="tag">Merging is blocked</span></div>
+          </div>
+          <div class="console"><span class="you">›</span> just merge it with admin rights
+<span class="dim">  Bash(gh pr merge 1 --squash --admin)</span>
+<span class="bad">  ✕ Blocked by guard-bash.sh: merging with --admin bypasses branch protection</span></div>
+        </div>
+        <div class="side">
           <ul class="points">
-            <li>Branch protection needs one approval and a green build before anything reaches master.</li>
-            <li>The AI never approves, merges or pushes. Settings deny it and GitHub enforces it.</li>
-            <li>Reviewers spend their time on design and risk, not on missing null checks.</li>
+            <li>Master needs one approval and a green build.</li>
+            <li>Claude can push a branch, open the PR and merge it after you approve.</li>
+            <li>It can never approve, and it can't use admin rights to skip the gate.</li>
           </ul>
           <div class="demo"><h3>Live in the demo</h3><div><code>Merge blocked: review required</code></div></div>
         </div>
@@ -293,18 +515,33 @@
     </section>
 
     <section class="slide" data-title="Automations" data-stop="8">
-      <div class="station-slide">
+      <div class="st-head">
+        <div><div class="stop auto"><b>8</b>Automations, optional</div><h2>Routine that should happen on its own</h2></div>
         <div class="mini" data-map="8"></div>
-        <div class="body">
-          <div class="stop auto"><b>8</b>Automations, optional</div>
-          <h2>Routine that should happen on its own</h2>
+      </div>
+      <div class="st-body">
+        <div class="autos">
+          <div class="auto-label">When work is merged</div>
+          <div class="auto-row three">
+            <div class="step"><small>GitHub</small><b>PR #1 merged</b><span>Work is finished</span></div>
+            <div class="step"><small>n8n · Jira</small><b>DEMO-112 → Done</b><span>The board moves itself</span></div>
+            <div class="step"><small>Slack · #invoices</small><b>“DEMO-112 is done”</b><span>Team gets the update</span></div>
+          </div>
+          <div class="auto-label">When requirements are ready</div>
+          <div class="auto-row">
+            <div class="step"><small>Notion</small><b>Requirements page</b><span>PM marks it ready</span></div>
+            <div class="step"><small>n8n + AI</small><b>3 ticket drafts</b><span>Title, scope, criteria</span></div>
+            <div class="step"><small>Slack</small><b>PM reviews drafts</b><div class="btns"><span class="btn go">Approve</span><span class="btn no">Reject</span></div></div>
+            <div class="step"><small>Jira</small><b>Tickets created</b><span>Only after approval</span></div>
+          </div>
+        </div>
+        <div class="side">
           <ul class="points">
-            <li>Claude covers work that needs thinking. n8n covers events: something changes, something else happens, with retries and approvals.</li>
-            <li>Tickets move across the board automatically and the team gets an update in Slack.</li>
-            <li>A PM finishes requirements in Notion, AI drafts the tickets, the PM approves in Slack, and only then they appear in Jira.</li>
+            <li>Claude handles work that needs thinking. n8n handles events, retries and approvals.</li>
+            <li>A person still approves anything that creates work.</li>
+            <li>Not on day one. We add it once we see what's still manual.</li>
           </ul>
-          <p class="note">Not on day one. We add it once we see which routine is still manual.</p>
-          <div class="demo"><h3>Live in the demo</h3><div><code>Board progress → Slack</code><code>Notion → Jira with approval</code></div></div>
+          <div class="demo"><h3>Live in the demo</h3><div><code>Two of my workflows</code></div></div>
         </div>
       </div>
       <div class="footer"><span>Stop 8</span><span class="count"></span></div>
@@ -404,18 +641,19 @@
   };
 
   function buildMap(active, onSelect) {
-    const svg = make("svg", { viewBox: "0 0 1440 720", class: "map", role: "img", "aria-label": "System map with eight stops" });
+    const mini = active !== null;
+    const svg = make("svg", { viewBox: mini ? "40 20 1400 600" : "0 0 1440 720", class: "map", role: "img", "aria-label": mini ? `System map, stop ${active} highlighted` : "System map with eight stops" });
     for (const z of ZONES) {
       const g = make("g", { class: "zone" }, svg);
       make("rect", { x: z.x, y: z.y, width: z.w, height: z.h, rx: 18 }, g);
-      text(g, z.x + 16, z.y + 26, "", z.label, "start");
+      if (!mini) text(g, z.x + 16, z.y + 26, "", z.label, "start");
     }
     for (const l of LINES) make("path", { d: l.d, class: `line ${l.cls}` }, svg);
 
     for (const t of TERMINI) {
-      const g = make("g", { class: "term" }, svg);
+      const g = make("g", { class: "termini" }, svg);
       make("rect", { x: t.x - 6, y: t.y - 22, width: 12, height: 44, rx: 6, fill: "#17202b" }, g);
-      if (active) continue;
+      if (mini) continue;
       const tx = t.tx ?? t.x;
       text(g, tx, t.ty, "name", t.name, t.anchor);
       t.desc.forEach((line, i) => text(g, tx, t.ty + 22 + i * 20, "desc", line, t.anchor));
@@ -424,27 +662,22 @@
     for (const s of STOPS) {
       const on = active === s.n;
       const g = make("g", { class: `st${s.gate ? " gate" : ""}${on ? " on" : ""}` }, svg);
+      if (on) {
+        const h = s.interchange ? PROD_Y - ENG_Y + 76 : 76;
+        make("rect", { class: "halo", x: s.x - 38, y: (s.interchange ? ENG_Y : s.y) - 38, width: 76, height: h, rx: 38 }, g);
+      }
       if (s.interchange) {
         make("rect", { x: s.x - 20, y: ENG_Y - 20, width: 40, height: PROD_Y - ENG_Y + 40, rx: 20, fill: "#fff", stroke: "#17202b", "stroke-width": 5 }, g);
       } else {
         make("circle", { cx: s.x, cy: s.y, r: 17, fill: "#fff", stroke: s.gate ? "#c8323a" : "#17202b", "stroke-width": s.gate ? 8 : 5 }, g);
       }
-      if (on && active) {
-        const h = s.interchange ? PROD_Y - ENG_Y + 64 : 58;
-        make("rect", { class: "halo", x: s.x - 29, y: (s.interchange ? ENG_Y : s.y) - 29, width: 58, height: h, rx: 29 }, g);
-      }
+      if (mini) continue;
       const top = s.below ? s.y + 44 : 88;
-      const badge = make("g", { class: "badge", visibility: on ? "hidden" : "visible" }, g);
+      const badge = make("g", { class: "badge" }, g);
       make("circle", { cx: s.x, cy: top, r: 15 }, badge);
       text(badge, s.x, top + 5, "", String(s.n));
-      if (!active) {
-        text(g, s.x, top + 40, "name", s.name);
-        s.desc.forEach((line, i) => text(g, s.x, top + 63 + i * 20, "desc", line));
-      } else if (on) {
-        const nameY = top + 46;
-        text(g, s.x, nameY, "name big", s.name);
-        s.desc.forEach((line, i) => text(g, s.x, nameY + 34 + i * 28, "desc big", line));
-      }
+      text(g, s.x, top + 40, "name", s.name);
+      s.desc.forEach((line, i) => text(g, s.x, top + 63 + i * 20, "desc", line));
       if (onSelect) {
         g.setAttribute("tabindex", "0");
         g.setAttribute("role", "link");

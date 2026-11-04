@@ -15,4 +15,4 @@ Output a table: severity (Critical / High / Medium / Low), file:line, problem, c
 Then one line verdict: "Ready for human review" or "Changes requested".
 
 Only report real problems with a concrete failure scenario. No style nitpicks the formatter already enforces.
-Never approve, merge or push. The final decision belongs to a human reviewer.
+Never approve or merge the PR you review. The final decision belongs to a human reviewer.

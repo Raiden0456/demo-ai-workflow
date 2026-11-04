@@ -11,8 +11,13 @@
       "Bash(git diff:*)",
       "Bash(git log:*)",
       "Bash(git show:*)",
+      "Bash(git add:*)",
+      "Bash(git fetch:*)",
+      "Bash(git branch:*)",
       "Bash(gh pr view:*)",
       "Bash(gh pr diff:*)",
+      "Bash(gh pr list:*)",
+      "Bash(gh pr checks:*)",
       "mcp__jira__get_active_sprint",
       "mcp__jira__search_issues",
       "mcp__jira__get_issue"
@@ -21,9 +26,17 @@
       "Bash(git commit:*)",
       "Bash(git checkout:*)",
       "Bash(git switch:*)",
+      "Bash(git merge:*)",
+      "Bash(git rebase:*)",
+      "Bash(git push:*)",
       "Bash(gh pr create:*)",
       "Bash(gh pr comment:*)",
-      "Bash(dotnet add:*)"
+      "Bash(gh pr merge:*)",
+      "Bash(gh api:*)",
+      "Bash(curl:*)",
+      "Bash(wget:*)",
+      "Bash(dotnet add:*)",
+      "WebFetch"
     ],
     "deny": [
       "Read(./.env)",
@@ -31,14 +44,8 @@
       "Read(./**/appsettings.*.local.json)",
       "Read(./secrets/**)",
       "Edit(./.claude/settings.json)",
-      "Bash(git push:*)",
-      "Bash(gh pr merge:*)",
       "Bash(gh pr review:*)",
-      "Bash(gh api:*)",
-      "Bash(curl:*)",
-      "Bash(wget:*)",
-      "Bash(rm -rf:*)",
-      "WebFetch"
+      "Bash(rm -rf:*)"
     ],
     "disableBypassPermissionsMode": "disable"
   },

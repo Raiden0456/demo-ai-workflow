@@ -7,4 +7,4 @@ Shared by every AI tool in this repo (Claude Code, Codex, Copilot). Source of tr
 - `REVIEW.md`
 
 Commands: `dotnet build -warnaserror`, `dotnet test`, `dotnet format --verify-no-changes`.
-Never commit, push, merge or approve PRs. Never read `.env*` or `*.local.json` files.
+Work on feature branches. Never push to master, force push or approve PRs. Never read `.env*` or `*.local.json` files.
