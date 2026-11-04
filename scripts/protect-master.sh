@@ -3,7 +3,7 @@ set -euo pipefail
 
 repo="${1:-$(gh repo view --json nameWithOwner -q .nameWithOwner)}"
 
-gh api -X PUT "repos/$repo/branches/master/protection" --input - <<'JSON'
+gh api -X PUT "repos/$repo/branches/master/protection" --input - >/dev/null <<'JSON'
 {
   "required_status_checks": { "strict": true, "contexts": ["build-test"] },
   "enforce_admins": false,
