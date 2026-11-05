@@ -35,6 +35,10 @@ public static class InvoiceEndpoints
             Transition(store.Find(user.TenantId(), id), invoice => invoice.Issue(clock.GetUtcNow())))
             .RequireAuthorization(Policies.CanBill);
 
+        group.MapPost("/{id:guid}/pay", (Guid id, ClaimsPrincipal user, InvoiceStore store, TimeProvider clock) =>
+            Transition(store.Find(user.TenantId(), id), invoice => invoice.Pay(clock.GetUtcNow())))
+            .RequireAuthorization(Policies.CanBill);
+
         group.MapPost("/{id:guid}/void", (Guid id, ClaimsPrincipal user, InvoiceStore store) =>
             Transition(store.Find(user.TenantId(), id), invoice => invoice.Void()))
             .RequireAuthorization(Policies.CanAdmin);

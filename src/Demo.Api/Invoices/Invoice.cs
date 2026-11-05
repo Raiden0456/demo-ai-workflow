@@ -18,6 +18,7 @@ public sealed class Invoice
     public required string Currency { get; init; }
     public InvoiceStatus Status { get; private set; } = InvoiceStatus.Draft;
     public DateTimeOffset? IssuedAt { get; private set; }
+    public DateTimeOffset? PaidAt { get; private set; }
 
     public void Issue(DateTimeOffset now)
     {
@@ -28,6 +29,17 @@ public sealed class Invoice
 
         Status = InvoiceStatus.Issued;
         IssuedAt = now;
+    }
+
+    public void Pay(DateTimeOffset now)
+    {
+        if (Status != InvoiceStatus.Issued)
+        {
+            throw new InvalidInvoiceTransitionException(Status, InvoiceStatus.Paid);
+        }
+
+        Status = InvoiceStatus.Paid;
+        PaidAt = now.ToUniversalTime();
     }
 
     public void Void()

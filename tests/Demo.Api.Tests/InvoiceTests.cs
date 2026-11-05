@@ -28,6 +28,58 @@ public sealed class InvoiceTests
     }
 
     [Fact]
+    public void Pay_moves_issued_to_paid()
+    {
+        var invoice = Draft();
+        invoice.Issue(Now);
+
+        invoice.Pay(Now);
+
+        Assert.Equal(InvoiceStatus.Paid, invoice.Status);
+        Assert.Equal(Now, invoice.PaidAt);
+    }
+
+    [Fact]
+    public void Pay_with_local_offset_stores_utc()
+    {
+        var invoice = Draft();
+        invoice.Issue(Now);
+
+        invoice.Pay(Now.ToOffset(TimeSpan.FromHours(2)));
+
+        Assert.Equal(TimeSpan.Zero, invoice.PaidAt!.Value.Offset);
+        Assert.Equal(Now, invoice.PaidAt);
+    }
+
+    [Fact]
+    public void Pay_from_draft_throws()
+    {
+        var invoice = Draft();
+
+        Assert.Throws<InvalidInvoiceTransitionException>(() => invoice.Pay(Now));
+    }
+
+    [Fact]
+    public void Pay_twice_throws()
+    {
+        var invoice = Draft();
+        invoice.Issue(Now);
+        invoice.Pay(Now);
+
+        Assert.Throws<InvalidInvoiceTransitionException>(() => invoice.Pay(Now));
+    }
+
+    [Fact]
+    public void Pay_from_void_throws()
+    {
+        var invoice = Draft();
+        invoice.Issue(Now);
+        invoice.Void();
+
+        Assert.Throws<InvalidInvoiceTransitionException>(() => invoice.Pay(Now));
+    }
+
+    [Fact]
     public void Void_is_allowed_for_issued_invoice()
     {
         var invoice = Draft();

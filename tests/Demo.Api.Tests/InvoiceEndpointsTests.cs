@@ -33,6 +33,14 @@ public sealed class InvoiceEndpointsTests(WebApplicationFactory<Program> factory
         return (await response.Content.ReadFromJsonAsync<InvoiceResponse>(Json))!;
     }
 
+    private async Task<InvoiceResponse> CreateIssued(string user)
+    {
+        var invoice = await CreateDraft(user);
+        var response = await ClientFor(user).PostAsync($"/invoices/{invoice.Id}/issue", null);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        return invoice;
+    }
+
     [Fact]
     public async Task Anonymous_request_is_rejected()
     {
@@ -108,6 +116,82 @@ public sealed class InvoiceEndpointsTests(WebApplicationFactory<Program> factory
         await ClientFor("alice").PostAsync($"/invoices/{invoice.Id}/issue", null);
 
         var response = await ClientFor("alice").PostAsync($"/invoices/{invoice.Id}/issue", null);
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task Billing_user_can_pay_issued_invoice()
+    {
+        var invoice = await CreateIssued("alice");
+
+        var response = await ClientFor("alice").PostAsync($"/invoices/{invoice.Id}/pay", null);
+        var paid = await response.Content.ReadFromJsonAsync<InvoiceResponse>(Json);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal(InvoiceStatus.Paid, paid!.Status);
+        Assert.NotNull(paid.PaidAt);
+        Assert.Equal(TimeSpan.Zero, paid.PaidAt.Value.Offset);
+    }
+
+    [Fact]
+    public async Task Admin_can_pay_issued_invoice()
+    {
+        var invoice = await CreateIssued("carol");
+
+        var response = await ClientFor("carol").PostAsync($"/invoices/{invoice.Id}/pay", null);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task Viewer_cannot_pay_invoice()
+    {
+        var invoice = await CreateIssued("alice");
+
+        var response = await ClientFor("bob").PostAsync($"/invoices/{invoice.Id}/pay", null);
+
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task Paying_invoice_of_another_tenant_returns_not_found()
+    {
+        var invoice = await CreateIssued("alice");
+
+        var response = await ClientFor("carol").PostAsync($"/invoices/{invoice.Id}/pay", null);
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task Paying_draft_invoice_returns_conflict()
+    {
+        var invoice = await CreateDraft("alice");
+
+        var response = await ClientFor("alice").PostAsync($"/invoices/{invoice.Id}/pay", null);
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task Paying_paid_invoice_returns_conflict()
+    {
+        var invoice = await CreateIssued("alice");
+        await ClientFor("alice").PostAsync($"/invoices/{invoice.Id}/pay", null);
+
+        var response = await ClientFor("alice").PostAsync($"/invoices/{invoice.Id}/pay", null);
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task Paying_void_invoice_returns_conflict()
+    {
+        var invoice = await CreateIssued("carol");
+        await ClientFor("carol").PostAsync($"/invoices/{invoice.Id}/void", null);
+
+        var response = await ClientFor("carol").PostAsync($"/invoices/{invoice.Id}/pay", null);
 
         Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
     }
