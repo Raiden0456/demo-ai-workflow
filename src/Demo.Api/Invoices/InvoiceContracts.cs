@@ -9,7 +9,8 @@ public sealed record InvoiceResponse(
     decimal Amount,
     string Currency,
     InvoiceStatus Status,
-    DateTimeOffset? IssuedAt)
+    DateTimeOffset? IssuedAt,
+    DateTimeOffset? PaidAt)
 {
     public static InvoiceResponse From(Invoice invoice) => new(
         invoice.Id,
@@ -18,5 +19,6 @@ public sealed record InvoiceResponse(
         invoice.Amount,
         invoice.Currency,
         invoice.Status,
-        invoice.IssuedAt);
+        invoice.IssuedAt,
+        invoice.PaidAt);
 }

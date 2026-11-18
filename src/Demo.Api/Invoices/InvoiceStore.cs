@@ -21,6 +21,14 @@ public sealed class InvoiceStore
         }
     }
 
+    public Invoice? GetById(Guid id)
+    {
+        lock (_lock)
+        {
+            return _invoices.GetValueOrDefault(id);
+        }
+    }
+
     public Invoice Create(string tenantId, string customer, decimal amount, string currency)
     {
         lock (_lock)
